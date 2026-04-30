@@ -1,0 +1,42 @@
+{
+  "id": "layout-2",
+  "durationMs": 12000,
+  "regions": [
+    {
+      "id": "cabecera-imagen",
+      "x": 0,
+      "y": 0,
+      "width": 100,
+      "height": 25,
+      "media": {
+        "type": "image",
+        "src": "/layouts/media/logosimarrovectorial.svg",
+        "alt": "Cabecera"
+      }
+    },
+    {
+      "id": "web-externa",
+      "x": 0,
+      "y": 25,
+      "width": 60,
+      "height": 75,
+      "media": {
+        "type": "web",
+        "src": "https://elpais.com",
+        "title": "Web externa"
+      }
+    },
+    {
+      "id": "panel-html",
+      "x": 60,
+      "y": 25,
+      "width": 40,
+      "height": 75,
+      "media": {
+        "type": "html",
+        "src": "/layouts/media/widget.html",
+        "title": "Panel local"
+      }
+    }
+  ]
+}
