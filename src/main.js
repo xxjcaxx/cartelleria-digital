@@ -21,6 +21,9 @@ let currentLayoutIndex = 0
 let activeLayer = layerA
 let inactiveLayer = layerB
 let rotationTimerId = null
+let lastManualAdvanceAt = 0
+
+const MANUAL_ADVANCE_GUARD_MS = 250
 
 function normalizeRegion(region) {
   return {
@@ -173,6 +176,20 @@ function renderError(message) {
   app.innerHTML = `<main class="error-screen"><h1>Error de configuración</h1><p>${message}</p></main>`
 }
 
+function handleManualAdvance() {
+  if (!layouts.length) {
+    return
+  }
+
+  const now = Date.now()
+  if (now - lastManualAdvanceAt < MANUAL_ADVANCE_GUARD_MS) {
+    return
+  }
+
+  lastManualAdvanceAt = now
+  activateNextLayout()
+}
+
 async function startSignage() {
   try {
     layouts = await loadLayouts()
@@ -182,5 +199,7 @@ async function startSignage() {
     renderError(message)
   }
 }
+
+window.addEventListener('pointerdown', handleManualAdvance)
 
 startSignage()

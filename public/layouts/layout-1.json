@@ -23,9 +23,9 @@
       "height": 50,
       "media": {
         "type": "image",
-        "src": "/layouts/media/erasmus.png",
+        "src": "/layouts/media/ka171.png",
         "title": "Foto Simarro",
-        "fit": "cover"
+        "fit": "contain"
       }
     },
     {
@@ -36,8 +36,9 @@
       "height": 50,
       "media": {
         "type": "image",
-        "src": "/layouts/media/infografia3.png",
-        "alt": "Promoción destacada"
+        "src": "/layouts/media/erasmusk.png",
+        "alt": "Promoción destacada",
+        "fit": "contain"
       }
     }
   ]
