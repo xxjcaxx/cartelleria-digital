@@ -10,21 +10,22 @@
       "height": 100,
       "media": {
         "type": "video",
-        "src": "/layouts/media/demo-video.mp4",
+        "src": "/layouts/media/DIAEUROPA.mp4",
         "loop": true,
         "controls": false
       }
     },
     {
-      "id": "lateral-html",
+      "id": "lateral-imagen2",
       "x": 70,
       "y": 0,
       "width": 30,
       "height": 50,
       "media": {
-        "type": "html",
-        "src": "/layouts/media/widget.html",
-        "title": "Widget local"
+        "type": "image",
+        "src": "/layouts/media/erasmus.png",
+        "title": "Foto Simarro",
+        "fit": "cover"
       }
     },
     {
@@ -35,7 +36,7 @@
       "height": 50,
       "media": {
         "type": "image",
-        "src": "/layouts/media/promo.svg",
+        "src": "/layouts/media/infografia3.png",
         "alt": "Promoción destacada"
       }
     }

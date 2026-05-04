@@ -59,7 +59,8 @@ Cada layout:
       "media": {
         "type": "image",
         "src": "/layouts/media/promo.svg",
-        "alt": "Promo"
+        "alt": "Promo",
+        "fit": "contain"
       }
     }
   ]
@@ -73,6 +74,9 @@ Cada layout:
   - `video` → etiqueta `video`
   - `html` → `iframe` apuntando a HTML local
   - `web` → `iframe` apuntando a web externa
+- En imágenes puedes usar `media.fit` u `media.objectFit` con estos valores:
+  - `contain` → muestra toda la imagen sin deformarla
+  - `cover` → cubre toda la región sin deformarla, recortando si hace falta
 
 ## Pantalla completa
 

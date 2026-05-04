@@ -33,6 +33,16 @@ function normalizeRegion(region) {
   }
 }
 
+function normalizeImageFit(media) {
+  const requestedFit = String(media.fit ?? media.objectFit ?? 'contain').toLowerCase()
+
+  if (requestedFit === 'cover') {
+    return 'cover'
+  }
+
+  return 'contain'
+}
+
 function createMediaElement(media, regionId) {
   if (!media || !media.type || !media.src) {
     throw new Error(`La región "${regionId}" no tiene media válida.`)
@@ -45,6 +55,7 @@ function createMediaElement(media, regionId) {
     image.loading = 'eager'
     image.decoding = 'async'
     image.className = 'region-media'
+    image.style.objectFit = normalizeImageFit(media)
     return image
   }
 

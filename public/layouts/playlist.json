@@ -1,6 +1,7 @@
 {
   "layouts": [
     "/layouts/layout-1.json",
-    "/layouts/layout-2.json"
+    "/layouts/layout-2.json",
+    "/layouts/layout-3.json"
   ]
 }

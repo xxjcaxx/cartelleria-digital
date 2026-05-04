@@ -46,7 +46,7 @@ Defines screen partitions using percentage coordinates and dimensions.
 ### 4. Media Mapping
 Maps each region to one supported media object.
 
-**Key Concepts**: `image`, `video`, `html`, `web`, required `src`
+**Key Concepts**: `image`, `video`, `html`, `web`, required `src`, optional image fit mode
 **Reference**: [Layout Schema Reference](references/layout-schema.md)
 
 ### 5. Path Correctness
@@ -99,10 +99,18 @@ Minimum valid region shape:
   "height": 100,
   "media": {
     "type": "image",
-    "src": "/layouts/media/promo.svg"
+    "src": "/layouts/media/promo.svg",
+    "fit": "contain"
   }
 }
 ```
+
+Image media may also include an optional fit mode:
+
+- `fit: "contain"` or `objectFit: "contain"` → show the full image without distortion
+- `fit: "cover"` or `objectFit: "cover"` → fill the whole region without distortion, cropping if needed
+
+If no fit mode is provided, default to `contain`.
 
 ## Step-by-Step Workflows
 
@@ -112,9 +120,10 @@ Minimum valid region shape:
 2. Start from a known-good template
 3. Define region geometry in percentages
 4. Assign media objects with valid `type` + `src`
-5. Set `durationMs`
-6. Add the layout path to `playlist.json` in the desired order
-7. Validate with checklist before finishing
+5. If a region uses `image`, optionally set `fit` or `objectFit` to `contain` or `cover`
+6. Set `durationMs`
+7. Add the layout path to `playlist.json` in the desired order
+8. Validate with checklist before finishing
 
 ### Workflow 2: Modify Existing Layout Safely
 
@@ -122,7 +131,8 @@ Minimum valid region shape:
 2. Edit only requested regions
 3. Preserve unrelated region/media blocks
 4. Re-check geometric bounds (`x + width <= 100`, `y + height <= 100`)
-5. Validate media paths and type compatibility
+5. For image regions, preserve or explicitly choose `fit`/`objectFit` when requested
+6. Validate media paths and type compatibility
 
 ### Workflow 3: Generate Playlist from Multiple Layouts
 
@@ -149,6 +159,7 @@ Minimum valid region shape:
 - ✅ Keep region IDs unique within each layout
 - ✅ Prefer deterministic file names (`layout-1`, `layout-2`, ...)
 - ✅ Ensure every region has exactly one media object
+- ✅ For `image` media, use `fit` or `objectFit` only with `contain` or `cover`
 - ✅ Provide `title` for iframe-based media (`html`, `web`)
 - ✅ Use safe durations (e.g., 8000–15000 ms)
 
@@ -156,6 +167,7 @@ Minimum valid region shape:
 
 - ❌ Don’t use unsupported media types
 - ❌ Don’t use relative filesystem paths in `src`
+- ❌ Don’t use unsupported image fit values beyond `contain` and `cover`
 - ❌ Don’t leave `regions` empty
 - ❌ Don’t place media files outside `public/layouts/media` for local assets
 - ❌ Don’t create overlapping regions unless explicitly requested
@@ -191,6 +203,7 @@ Minimum valid region shape:
 |--------|--------------|-----|
 | Layout not shown | Path missing in playlist | Add layout path to `playlist.json` |
 | Region blank | `media.src` wrong or missing file | Correct `src` path or add media file |
+| Image framed incorrectly | Missing or wrong `fit` / `objectFit` | Use `contain` to show all or `cover` to fill region |
 | Runtime error | Unsupported `media.type` | Use `image`, `video`, `html`, or `web` |
 | Layout fails load | Invalid JSON syntax | Fix commas/quotes and revalidate |
 | Web iframe empty | External site blocks embedding | Replace source or use local HTML |
@@ -206,6 +219,7 @@ Before considering layout generation complete:
 - [ ] Every layout has non-empty `regions`
 - [ ] Every region includes `id`, `x`, `y`, `width`, `height`, `media`
 - [ ] Every `media` has valid `type` and `src`
+- [ ] Every image fit mode, when present, is `contain` or `cover`
 - [ ] All local media assets resolve under `/layouts/media/`
 - [ ] Geometry is bounded and coherent with intended design
 
