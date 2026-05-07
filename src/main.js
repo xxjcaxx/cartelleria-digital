@@ -46,6 +46,16 @@ function normalizeImageFit(media) {
   return 'contain'
 }
 
+function normalizeVideoFit(media) {
+  const requestedFit = String(media.fit ?? media.objectFit ?? 'cover').toLowerCase()
+
+  if (requestedFit === 'contain') {
+    return 'contain'
+  }
+
+  return 'cover'
+}
+
 function createMediaElement(media, regionId) {
   if (!media || !media.type || !media.src) {
     throw new Error(`La región "${regionId}" no tiene media válida.`)
@@ -71,6 +81,7 @@ function createMediaElement(media, regionId) {
     video.loop = media.loop !== false
     video.playsInline = true
     video.controls = media.controls === true
+    video.style.objectFit = normalizeVideoFit(media)
     return video
   }
 

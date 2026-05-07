@@ -1,6 +1,6 @@
 {
   "id": "layout-1",
-  "durationMs": 10000,
+  "durationMs": 36000,
   "regions": [
     {
       "id": "principal-video",
@@ -11,6 +11,7 @@
       "media": {
         "type": "video",
         "src": "/layouts/media/DIAEUROPA.mp4",
+        "fit": "contain",
         "loop": true,
         "controls": false
       }
