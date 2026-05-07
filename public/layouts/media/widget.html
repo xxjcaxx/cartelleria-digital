@@ -6,37 +6,497 @@
     <title>Widget local</title>
     <style>
       :root {
-        color-scheme: dark;
-        font-family: system-ui, sans-serif;
+        --bg-1: #07111d;
+        --bg-2: #0c223a;
+        --card-1: rgba(8, 29, 49, 0.84);
+        --card-2: rgba(7, 22, 38, 0.92);
+        --line: rgba(126, 228, 255, 0.28);
+        --text-soft: #b8d8ea;
+        --text-main: #e8f5ff;
+        --accent: #35d7ff;
+        --accent-2: #17f0bc;
+        --glow: rgba(53, 215, 255, 0.55);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
       }
 
       body {
-        margin: 0;
-        width: 100vw;
-        height: 100vh;
+        font-family: "Segoe UI", "SF Pro Text", "Helvetica Neue", sans-serif;
+        color: var(--text-main);
+        background:
+          radial-gradient(140% 120% at 95% -20%, rgba(23, 240, 188, 0.16) 0%, transparent 45%),
+          radial-gradient(130% 130% at -10% 110%, rgba(53, 215, 255, 0.2) 0%, transparent 52%),
+          linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 100%);
+        overflow: hidden;
+      }
+
+      body::before,
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      body::before {
+        background-image:
+          linear-gradient(rgba(126, 228, 255, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(126, 228, 255, 0.05) 1px, transparent 1px);
+        background-size: 36px 36px;
+        opacity: 0.36;
+      }
+
+      body::after {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.02) 0%,
+          rgba(255, 255, 255, 0) 22%,
+          rgba(255, 255, 255, 0.02) 54%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        animation: scan 9s linear infinite;
+      }
+
+      main {
+        width: 100%;
+        height: 100%;
         display: grid;
-        place-content: center;
-        background: #111;
-        color: #fff;
-        text-align: center;
+        place-items: start center;
+        padding: 10px;
+        overflow: hidden;
       }
 
-      h1 {
-        margin: 0;
-        font-size: 2.2rem;
+      .widget-stage {
+        --fit-scale: 1;
+        width: 100%;
+        transform: scale(var(--fit-scale));
+        transform-origin: top center;
+        will-change: transform;
       }
 
-      p {
-        margin: 0.5rem 0 0;
-        opacity: 0.85;
-        font-size: 1.2rem;
+      .excellence-visual {
+        width: 100%;
+        opacity: 0;
+        transform: translateY(14px) scale(0.985);
+        animation: intro 850ms cubic-bezier(0.2, 0.8, 0.2, 1) 100ms forwards;
+      }
+
+      .visual-card {
+        /*border: 1px solid var(--line);
+        border-radius: 18px;*/
+        background: linear-gradient(170deg, var(--card-1) 0%, var(--card-2) 100%);
+        box-shadow:
+          0 10px 40px rgba(0, 0, 0, 0.35),
+          0 0 0 1px rgba(161, 229, 255, 0.04) inset,
+          0 0 24px rgba(17, 203, 255, 0.16);
+        backdrop-filter: blur(3px);
+        overflow: hidden;
+      }
+
+      .vc-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 16px 20px;
+        border-bottom: 1px solid rgba(126, 228, 255, 0.2);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0));
+      }
+
+      .vc-dots {
+        display: flex;
+        gap: 6px;
+      }
+
+      .vc-dots span {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 8px var(--glow);
+        animation: pulse 2.6s infinite;
+      }
+
+      .vc-dots span:nth-child(2) {
+        animation-delay: 180ms;
+      }
+
+      .vc-dots span:nth-child(3) {
+        animation-delay: 360ms;
+      }
+
+      .vc-title {
+        margin-left: auto;
+        letter-spacing: 0.04em;
+        font-size: clamp(0.98rem, 2.1vw, 1.16rem);
+        text-transform: uppercase;
+        color: #dcf6ff;
+      }
+
+      .vc-body {
+        padding: 18px 20px 22px;
+        display: grid;
+        gap: 12px;
+      }
+
+      .vc-metric {
+        display: grid;
+        grid-template-columns: minmax(148px, 34%) 1fr;
+        align-items: center;
+        gap: 14px;
+       /* border: 1px solid rgba(126, 228, 255, 0.14);
+        border-radius: 12px;*/
+        padding: 10px 12px;
+        background: rgba(5, 18, 31, 0.48);
+        opacity: 0;
+        transform: translateX(-8px);
+      }
+
+      .vc-metric-label {
+        font-size: 0.82rem;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: var(--text-soft);
+      }
+
+      .vc-metric-val {
+        text-align: right;
+        font-weight: 600;
+        color: var(--text-main);
+      }
+
+      .vc-metric-val.highlight {
+        color: #d1ffff;
+        text-shadow: 0 0 10px rgba(53, 215, 255, 0.28);
+      }
+
+      .vc-bar-section {
+        border: 0;
+        border-radius: 12px;
+        padding: 7px 9px 8px;
+        background: rgba(5, 18, 31, 0.48);
+        opacity: 0;
+        transform: translateX(-8px);
+      }
+
+      .vc-bar {
+        margin-top: 4px;
+        width: 100%;
+        height: 26px;
+        border-radius: 999px;
+        padding: 3px;
+        border: 1px solid rgba(126, 228, 255, 0.2);
+        background: linear-gradient(180deg, rgba(2, 10, 18, 0.85), rgba(3, 12, 22, 0.55));
+        overflow: hidden;
+      }
+
+      .vc-bar-fill {
+        height: 100%;
+        width: 0;
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 10px;
+        color: #05111b;
+        font-size: 0.83rem;
+        font-weight: 700;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.16) inset,
+          0 0 14px rgba(21, 231, 255, 0.32);
+        transition: width 1200ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .vc-bar-fill span {
+        opacity: 0;
+        transform: translateX(4px);
+        transition: opacity 420ms ease 420ms, transform 420ms ease 420ms;
+      }
+
+      .vc-bar-fill.is-done span {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      .is-visible {
+        animation: rowIn 650ms cubic-bezier(0.18, 0.86, 0.28, 1) forwards;
+      }
+
+      @keyframes intro {
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @keyframes rowIn {
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 0.5;
+          transform: scale(0.94);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1.08);
+        }
+      }
+
+      @keyframes scan {
+        0% {
+          transform: translateY(-10%);
+        }
+        100% {
+          transform: translateY(10%);
+        }
+      }
+
+      @media (max-width: 640px) {
+        .vc-body {
+          padding: 14px;
+        }
+
+        .vc-metric {
+          grid-template-columns: 1fr;
+          gap: 4px;
+        }
+
+        .vc-metric-val {
+          text-align: left;
+        }
+
+        .vc-bar {
+          height: 24px;
+        }
+      }
+
+      @media (max-height: 720px) {
+        .vc-header {
+          padding: 12px 14px;
+        }
+
+        .vc-body {
+          gap: 8px;
+          padding: 12px;
+        }
+
+        .vc-metric,
+        .vc-bar-section {
+          padding: 6px 8px;
+        }
+
+        .vc-bar {
+          height: 22px;
+        }
+      }
+
+      @media (max-width: 480px), (max-height: 460px) {
+        .vc-header {
+          padding: 12px 14px;
+        }
+
+        .vc-title {
+          font-size: 0.88rem;
+          letter-spacing: 0.03em;
+        }
+
+        .vc-body {
+          gap: 8px;
+          padding: 10px 12px 12px;
+        }
+
+        .vc-metric,
+        .vc-bar-section {
+          padding: 5px 7px;
+          border-radius: 10px;
+        }
+
+        .vc-metric-label {
+          font-size: 0.72rem;
+        }
+
+        .vc-metric-val {
+          font-size: 0.88rem;
+        }
+
+        .vc-bar {
+          margin-top: 6px;
+          height: 20px;
+        }
+
+        .vc-bar-fill {
+          font-size: 0.74rem;
+          padding-right: 7px;
+        }
+      }
+
+      @media (max-width: 360px), (max-height: 360px) {
+        .visual-card {
+          border-radius: 14px;
+        }
+
+        .vc-header {
+          padding: 10px 12px;
+        }
+
+        .vc-dots {
+          gap: 4px;
+        }
+
+        .vc-dots span {
+          width: 6px;
+          height: 6px;
+        }
+
+        .vc-title {
+          font-size: 0.78rem;
+        }
+
+        .vc-body {
+          gap: 6px;
+          padding: 8px 10px 10px;
+        }
+
+        .vc-metric,
+        .vc-bar-section {
+          padding: 4px 6px;
+        }
+
+        .vc-metric-label {
+          font-size: 0.66rem;
+        }
+
+        .vc-metric-val {
+          font-size: 0.8rem;
+        }
+
+        .vc-bar {
+          height: 18px;
+          padding: 2px;
+        }
       }
     </style>
   </head>
   <body>
     <main>
-      <h1>Contenido HTML local</h1>
-      <p>Reemplaza este archivo por tu propio panel.</p>
+      <div class="widget-stage">
+        <div class="excellence-visual reveal visible">
+          <div class="visual-card">
+            <div class="vc-header">
+              <div class="vc-dots"><span></span><span></span><span></span></div>
+              <span class="vc-title">Centro de Excelencia · Status</span>
+            </div>
+            <div class="vc-body">
+              <div class="vc-metric">
+                <span class="vc-metric-label">Modalidad</span>
+                <span class="vc-metric-val highlight">Red Estatal · Tipo 1</span>
+              </div>
+              <div class="vc-metric">
+                <span class="vc-metric-label">Financiación</span>
+                <span class="vc-metric-val">NextGenerationEU</span>
+              </div>
+              <div class="vc-metric">
+                <span class="vc-metric-label">Área</span>
+                <span class="vc-metric-val highlight">IA &amp; Big Data</span>
+              </div>
+              <div class="vc-metric">
+                <span class="vc-metric-label">Sede</span>
+                <span class="vc-metric-val">Xàtiva, Valencia</span>
+              </div>
+              <div class="vc-bar-section">
+                <span class="vc-metric-label">Progreso del Proyecto</span>
+                <div class="vc-bar">
+                  <div class="vc-bar-fill" style="width: 72%;"><span>72%</span></div>
+                </div>
+              </div>
+              <div class="vc-bar-section">
+                <span class="vc-metric-label">Integración Empresarial</span>
+                <div class="vc-bar">
+                  <div class="vc-bar-fill" style="width: 88%;"><span>88%</span></div>
+                </div>
+              </div>
+              <div class="vc-bar-section">
+                <span class="vc-metric-label">Innovación Curricular</span>
+                <div class="vc-bar">
+                  <div class="vc-bar-fill" style="width: 60%;"><span>60%</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
+    <script>
+      (function () {
+        const stage = document.querySelector(".widget-stage");
+        const main = document.querySelector("main");
+
+        function fitToViewport() {
+          if (!stage || !main) {
+            return;
+          }
+
+          stage.style.setProperty("--fit-scale", "1");
+          const rect = stage.getBoundingClientRect();
+
+          const hostRect = main.getBoundingClientRect();
+          const availableWidth = Math.max(120, hostRect.width);
+          const availableHeight = Math.max(120, hostRect.height);
+          const scaleX = availableWidth / rect.width;
+          const scaleY = availableHeight / rect.height;
+          const scale = Math.min(1, scaleX, scaleY);
+
+          stage.style.setProperty("--fit-scale", String(Math.max(0.3, scale)));
+        }
+
+        const rows = document.querySelectorAll(".vc-metric, .vc-bar-section");
+        rows.forEach((row, index) => {
+          setTimeout(() => row.classList.add("is-visible"), 120 + index * 120);
+        });
+
+        const fills = document.querySelectorAll(".vc-bar-fill");
+        fills.forEach((fill, index) => {
+          const targetWidth = fill.style.width || "0%";
+          fill.style.width = "0%";
+          setTimeout(() => {
+            fill.style.width = targetWidth;
+            fill.addEventListener(
+              "transitionend",
+              () => fill.classList.add("is-done"),
+              { once: true }
+            );
+          }, 500 + index * 220);
+        });
+
+        let resizeTimer;
+        window.addEventListener("resize", () => {
+          window.clearTimeout(resizeTimer);
+          resizeTimer = window.setTimeout(fitToViewport, 80);
+        });
+
+        if (window.visualViewport) {
+          window.visualViewport.addEventListener("resize", fitToViewport);
+        }
+
+        fitToViewport();
+        window.setTimeout(fitToViewport, 250);
+      })();
+    </script>
   </body>
 </html>

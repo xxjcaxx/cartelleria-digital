@@ -1,0 +1,13 @@
+services:
+  apache:
+    build:
+      context: .
+      dockerfile: Dockerfile.apache
+    container_name: cartelleria-apache
+    command: ["/bin/sh", "-c", "/usr/local/bin/fetch-webcams-cache.sh & exec httpd-foreground"]
+    ports:
+    - '80:80'
+    volumes:
+    - ./dist:/usr/local/apache2/htdocs
+    restart: always
+

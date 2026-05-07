@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Webcams Gotafreda</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --bg2: #0b2134;
+      --panel: #0b1f33;
+      --panel2: #102b43;
+      --text: #e6f6ff;
+      --muted: #7fb0cd;
+      --line: #1a3f60;
+      --accent: #23d3ff;
+      --accent2: #63ffa9;
+      --radius: 14px;
+      --gap: 12px;
+      --pad: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 85% -10%, rgb(35 211 255 / 18%), transparent 65%),
+        radial-gradient(900px 500px at -10% 110%, rgb(99 255 169 / 14%), transparent 65%),
+        linear-gradient(135deg, var(--bg), var(--bg2));
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    .wrap {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(280px, 1fr);
+      gap: var(--gap);
+      padding: var(--pad);
+      position: relative;
+    }
+
+    .wrap::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgb(35 211 255 / 6%) 1px, transparent 1px),
+        linear-gradient(90deg, rgb(35 211 255 / 6%) 1px, transparent 1px);
+      background-size: 30px 30px;
+      mask-image: radial-gradient(circle at center, black 15%, transparent 100%);
+    }
+
+    .cams-col {
+      min-height: 0;
+      display: grid;
+      grid-template-rows: 1fr 1fr;
+      gap: var(--gap);
+    }
+
+    .avamet-col {
+      background: linear-gradient(180deg, rgb(11 31 51 / 94%), rgb(7 20 34 / 94%));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      display: grid;
+      grid-template-rows: 32px 1fr;
+      min-height: 0;
+      overflow: hidden;
+      box-shadow:
+        inset 0 0 0 1px rgb(35 211 255 / 12%),
+        0 10px 30px rgb(0 0 0 / 35%);
+    }
+
+    .avamet-body {
+      min-height: 0;
+      overflow: auto;
+      background:
+        linear-gradient(180deg, rgb(7 20 34 / 96%), rgb(5 15 27 / 96%));
+      color: #cfefff;
+      padding: 10px;
+      border-top: 1px solid rgb(35 211 255 / 20%);
+    }
+
+    .avamet-empty {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .cam {
+      background: linear-gradient(180deg, rgb(11 31 51 / 95%), rgb(8 24 40 / 95%));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      display: grid;
+      grid-template-rows: 32px 1fr;
+      overflow: hidden;
+      min-height: 0;
+      box-shadow:
+        inset 0 0 0 1px rgb(35 211 255 / 10%),
+        0 10px 24px rgb(0 0 0 / 30%);
+    }
+
+    .label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      border-bottom: 1px solid var(--line);
+      white-space: nowrap;
+      background: linear-gradient(90deg, rgb(35 211 255 / 12%), transparent 65%);
+    }
+
+    .label strong {
+      color: var(--text);
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .frame {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      background: #000;
+      position: relative;
+      isolation: isolate;
+    }
+
+    .frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      background: #000;
+    }
+
+    .frame::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgb(0 0 0 / 0%) 70%, rgb(0 0 0 / 40%) 100%),
+        repeating-linear-gradient(
+          0deg,
+          rgb(35 211 255 / 0%) 0,
+          rgb(35 211 255 / 0%) 3px,
+          rgb(35 211 255 / 5%) 4px
+        );
+      pointer-events: none;
+      mix-blend-mode: screen;
+      z-index: 1;
+    }
+
+    .status {
+      position: absolute;
+      left: 8px;
+      bottom: 8px;
+      font-size: 0.75rem;
+      color: #d9f7ff;
+      background: rgb(2 12 22 / 72%);
+      padding: 3px 7px;
+      border-radius: 999px;
+      backdrop-filter: blur(2px);
+      border: 1px solid rgb(35 211 255 / 35%);
+      z-index: 2;
+    }
+
+    #avametContent {
+      scrollbar-width: thin;
+      scrollbar-color: rgb(35 211 255 / 50%) rgb(11 31 51 / 80%);
+    }
+
+    #avametContent table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    #avametContent td,
+    #avametContent th {
+      border-bottom: 1px solid rgb(35 211 255 / 18%);
+      padding: 6px 4px;
+      color: #d8f5ff;
+    }
+
+    #avametContent a {
+      color: var(--accent2);
+    }
+
+    #avametContent .mxmxoValT,
+    #avametContent .mxmxoValTx,
+    #avametContent .mxmxoValTn,
+    #avametContent .mxmxoValP {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    @media (max-width: 900px) {
+      .wrap {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
+      }
+
+      .wrap::before {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap" aria-label="Panel de webcams">
+    <section class="cams-col" aria-label="Camaras">
+      <section class="cam">
+        <div class="label"><strong>Webcam 1</strong><span id="t1">--:--:--</span></div>
+        <div class="frame">
+          <img id="cam1" alt="Imagen en directo de la webcam 1">
+          <div class="status" id="s1">Actualizando...</div>
+        </div>
+      </section>
+
+      <section class="cam">
+        <div class="label"><strong>Webcam 2</strong><span id="t2">--:--:--</span></div>
+        <div class="frame">
+          <img id="cam2" alt="Imagen en directo de la webcam 2">
+          <div class="status" id="s2">Actualizando...</div>
+        </div>
+      </section>
+    </section>
+
+    <section class="avamet-col" aria-label="Datos AVAMET">
+      <div class="label"><strong>AVAMET interior</strong><span id="avTime">--:--:--</span></div>
+      <div class="avamet-body" id="avametContent">
+        <div class="avamet-empty" id="avStatus">Cargando datos...</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const CAMERA_URLS = [
+      "webcam1-cache.jpg",
+      "webcam2-cache.jpg"
+    ];
+
+    const AVAMET_URL = "avamet-cache.html";
+
+    const REFRESH_MS = 15000;
+
+    function withNoCache(baseUrl) {
+      const url = new URL(baseUrl, window.location.href);
+      // Unique random token on every request to bypass cache.
+      const token = `${Date.now()}${Math.floor(Math.random() * 1_000_000)}`;
+      url.searchParams.set("nocatxe", token);
+      return url.toString();
+    }
+
+    function updateCamera(index) {
+      const n = index + 1;
+      const img = document.getElementById(`cam${n}`);
+      const status = document.getElementById(`s${n}`);
+      const time = document.getElementById(`t${n}`);
+
+      const requestUrl = withNoCache(CAMERA_URLS[index]);
+      const now = new Date().toLocaleTimeString("es-ES");
+
+      status.textContent = "Actualizando...";
+      img.src = requestUrl;
+
+      img.onload = () => {
+        status.textContent = `OK ${now}`;
+        time.textContent = now;
+      };
+
+      img.onerror = () => {
+        status.textContent = "Error al cargar";
+        time.textContent = now;
+      };
+    }
+
+    function refreshAll() {
+      updateCamera(0);
+      updateCamera(1);
+      updateAvamet();
+    }
+
+    async function updateAvamet() {
+      const avametContent = document.getElementById("avametContent");
+      const avStatus = document.getElementById("avStatus");
+      const avTime = document.getElementById("avTime");
+      const now = new Date().toLocaleTimeString("es-ES");
+
+      try {
+        if (avStatus) {
+          avStatus.textContent = "Actualizando...";
+        }
+
+        const response = await fetch(withNoCache(AVAMET_URL), {
+          cache: "no-store"
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const html = await response.text();
+        const doc = new DOMParser().parseFromString(html, "text/html");
+        const interior = doc.getElementById("interior");
+
+        if (!interior) {
+          throw new Error("No existe #interior en avamet-cache.html");
+        }
+
+        avametContent.innerHTML = interior.innerHTML;
+        avTime.textContent = now;
+      } catch (error) {
+        avametContent.innerHTML = `<div class="avamet-empty">No se pudo cargar AVAMET (${error.message})</div>`;
+        avTime.textContent = now;
+      }
+    }
+
+    refreshAll();
+    setInterval(refreshAll, REFRESH_MS);
+  </script>
+</body>
+</html>

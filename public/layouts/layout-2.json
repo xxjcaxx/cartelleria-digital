@@ -10,7 +10,7 @@
       "height": 25,
       "media": {
         "type": "image",
-        "src": "/layouts/media/logosimarrovectorial.svg",
+        "src": "/layouts/media/logosimarrovectorial.png",
         "alt": "Cabecera"
       }
     },
@@ -21,8 +21,8 @@
       "width": 60,
       "height": 75,
       "media": {
-        "type": "web",
-        "src": "https://elpais.com",
+        "type": "html",
+        "src": "/layouts/media/ex/index.html",
         "title": "Web externa"
       }
     },

@@ -21,6 +21,9 @@ let currentLayoutIndex = 0
 let activeLayer = layerA
 let inactiveLayer = layerB
 let rotationTimerId = null
+let lastManualAdvanceAt = 0
+
+const MANUAL_ADVANCE_GUARD_MS = 250
 
 function normalizeRegion(region) {
   return {
@@ -31,6 +34,26 @@ function normalizeRegion(region) {
     height: Number(region.height ?? 100),
     media: region.media ?? null,
   }
+}
+
+function normalizeImageFit(media) {
+  const requestedFit = String(media.fit ?? media.objectFit ?? 'contain').toLowerCase()
+
+  if (requestedFit === 'cover') {
+    return 'cover'
+  }
+
+  return 'contain'
+}
+
+function normalizeVideoFit(media) {
+  const requestedFit = String(media.fit ?? media.objectFit ?? 'cover').toLowerCase()
+
+  if (requestedFit === 'contain') {
+    return 'contain'
+  }
+
+  return 'cover'
 }
 
 function createMediaElement(media, regionId) {
@@ -45,6 +68,7 @@ function createMediaElement(media, regionId) {
     image.loading = 'eager'
     image.decoding = 'async'
     image.className = 'region-media'
+    image.style.objectFit = normalizeImageFit(media)
     return image
   }
 
@@ -57,6 +81,7 @@ function createMediaElement(media, regionId) {
     video.loop = media.loop !== false
     video.playsInline = true
     video.controls = media.controls === true
+    video.style.objectFit = normalizeVideoFit(media)
     return video
   }
 
@@ -162,6 +187,20 @@ function renderError(message) {
   app.innerHTML = `<main class="error-screen"><h1>Error de configuración</h1><p>${message}</p></main>`
 }
 
+function handleManualAdvance() {
+  if (!layouts.length) {
+    return
+  }
+
+  const now = Date.now()
+  if (now - lastManualAdvanceAt < MANUAL_ADVANCE_GUARD_MS) {
+    return
+  }
+
+  lastManualAdvanceAt = now
+  activateNextLayout()
+}
+
 async function startSignage() {
   try {
     layouts = await loadLayouts()
@@ -171,5 +210,7 @@ async function startSignage() {
     renderError(message)
   }
 }
+
+window.addEventListener('pointerdown', handleManualAdvance)
 
 startSignage()

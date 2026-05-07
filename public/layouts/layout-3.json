@@ -1,0 +1,32 @@
+{
+  "id": "layout-3",
+  "durationMs": 10000,
+  "regions": [
+    {
+      "id": "foto-superior",
+      "x": 0,
+      "y": 0,
+      "width": 100,
+      "height": 25,
+      "media": {
+        "type": "image",
+        "src": "/layouts/media/ies1.jpg",
+        "alt": "IES 1",
+        "fit": "cover"
+      }
+    },
+    {
+      "id": "video-inferior",
+      "x": 0,
+      "y": 25,
+      "width": 100,
+      "height": 75,
+      "media": {
+        "type": "video",
+        "src": "/layouts/media/Scada1.mp4",
+        "loop": true,
+        "controls": false
+      }
+    }
+  ]
+}

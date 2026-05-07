@@ -1,6 +1,6 @@
 {
   "id": "layout-1",
-  "durationMs": 10000,
+  "durationMs": 36000,
   "regions": [
     {
       "id": "principal-video",
@@ -10,21 +10,23 @@
       "height": 100,
       "media": {
         "type": "video",
-        "src": "/layouts/media/demo-video.mp4",
+        "src": "/layouts/media/DIAEUROPA.mp4",
+        "fit": "contain",
         "loop": true,
         "controls": false
       }
     },
     {
-      "id": "lateral-html",
+      "id": "lateral-imagen2",
       "x": 70,
       "y": 0,
       "width": 30,
       "height": 50,
       "media": {
-        "type": "html",
-        "src": "/layouts/media/widget.html",
-        "title": "Widget local"
+        "type": "image",
+        "src": "/layouts/media/ka171.png",
+        "title": "Foto Simarro",
+        "fit": "contain"
       }
     },
     {
@@ -35,8 +37,9 @@
       "height": 50,
       "media": {
         "type": "image",
-        "src": "/layouts/media/promo.svg",
-        "alt": "Promoción destacada"
+        "src": "/layouts/media/erasmusk.png",
+        "alt": "Promoción destacada",
+        "fit": "contain"
       }
     }
   ]
