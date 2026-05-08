@@ -83,6 +83,9 @@
     .avamet-body {
       min-height: 0;
       overflow: auto;
+      display: grid;
+      align-content: start;
+      gap: 12px;
       background:
         linear-gradient(180deg, rgb(7 20 34 / 96%), rgb(5 15 27 / 96%));
       color: #cfefff;
@@ -90,8 +93,93 @@
       border-top: 1px solid rgb(35 211 255 / 20%);
     }
 
+    .avamet-live {
+      min-width: 0;
+    }
+
     .avamet-empty {
       font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .avamet-chart-card {
+      border: 1px solid rgb(35 211 255 / 16%);
+      border-radius: 12px;
+      padding: 10px;
+      background: linear-gradient(180deg, rgb(10 28 45 / 92%), rgb(5 17 30 / 92%));
+      box-shadow: inset 0 0 0 1px rgb(35 211 255 / 8%);
+    }
+
+    .avamet-chart-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .avamet-chart-title {
+      margin: 0;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .avamet-chart-subtitle {
+      margin: 0;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .avamet-chart-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 8px 0 0;
+      padding: 0;
+      list-style: none;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .avamet-chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 8px 0 0;
+      font-size: 0.76rem;
+      color: #d8f5ff;
+    }
+
+    .avamet-chart-legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .avamet-chart-legend i {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+
+    .avamet-chart {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      border-radius: 10px;
+      background: rgb(3 12 22 / 40%);
+      border: 1px solid rgb(35 211 255 / 10%);
+    }
+
+    .avamet-chart svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .avamet-chart-error {
+      font-size: 0.82rem;
       color: var(--muted);
     }
 
@@ -218,29 +306,29 @@
   </style>
 </head>
 <body>
-  <main class="wrap" aria-label="Panel de webcams">
-    <section class="cams-col" aria-label="Camaras">
+  <main class="wrap" aria-label="Tauler de webcams">
+    <section class="cams-col" aria-label="Càmeres">
       <section class="cam">
         <div class="label"><strong>Webcam 1</strong><span id="t1">--:--:--</span></div>
         <div class="frame">
-          <img id="cam1" alt="Imagen en directo de la webcam 1">
-          <div class="status" id="s1">Actualizando...</div>
+          <img id="cam1" alt="Imatge en directe de la webcam 1">
+          <div class="status" id="s1">Actualitzant...</div>
         </div>
       </section>
 
       <section class="cam">
         <div class="label"><strong>Webcam 2</strong><span id="t2">--:--:--</span></div>
         <div class="frame">
-          <img id="cam2" alt="Imagen en directo de la webcam 2">
-          <div class="status" id="s2">Actualizando...</div>
+          <img id="cam2" alt="Imatge en directe de la webcam 2">
+          <div class="status" id="s2">Actualitzant...</div>
         </div>
       </section>
     </section>
 
-    <section class="avamet-col" aria-label="Datos AVAMET">
+    <section class="avamet-col" aria-label="Dades AVAMET">
       <div class="label"><strong>AVAMET interior</strong><span id="avTime">--:--:--</span></div>
       <div class="avamet-body" id="avametContent">
-        <div class="avamet-empty" id="avStatus">Cargando datos...</div>
+        <div class="avamet-empty" id="avStatus">Carregant dades...</div>
       </div>
     </section>
   </main>
@@ -252,8 +340,16 @@
     ];
 
     const AVAMET_URL = "avamet-cache.html";
+    const AVAMET_HIST_URL = "avamet-hist-cache.html";
 
     const REFRESH_MS = 15000;
+    const CHART_COLORS = {
+      min: "#63ffa9",
+      mean: "#23d3ff",
+      max: "#ffd166",
+      grid: "rgba(127, 176, 205, 0.24)",
+      text: "#cfefff"
+    };
 
     function withNoCache(baseUrl) {
       const url = new URL(baseUrl, window.location.href);
@@ -272,7 +368,7 @@
       const requestUrl = withNoCache(CAMERA_URLS[index]);
       const now = new Date().toLocaleTimeString("es-ES");
 
-      status.textContent = "Actualizando...";
+      status.textContent = "Actualitzant...";
       img.src = requestUrl;
 
       img.onload = () => {
@@ -281,7 +377,7 @@
       };
 
       img.onerror = () => {
-        status.textContent = "Error al cargar";
+        status.textContent = "Error en carregar";
         time.textContent = now;
       };
     }
@@ -292,6 +388,319 @@
       updateAvamet();
     }
 
+    function parseLocaleNumber(value) {
+      const normalized = String(value ?? "")
+        .trim()
+        .replace(/\./g, "")
+        .replace(",", ".")
+        .replace(/[^\d.-]/g, "");
+      const parsed = Number.parseFloat(normalized);
+      return Number.isFinite(parsed) ? parsed : null;
+    }
+
+    function extractAvametHistory(doc) {
+      return Array.from(doc.querySelectorAll("table.tDades tbody tr"))
+        .map((row) => {
+          const cells = Array.from(row.querySelectorAll("td, th")).map((cell) => cell.textContent.trim());
+
+          if (cells.length < 14) {
+            return null;
+          }
+
+          const min = parseLocaleNumber(cells[1]);
+          const mean = parseLocaleNumber(cells[2]);
+          const max = parseLocaleNumber(cells[3]);
+
+          if (min === null || mean === null || max === null) {
+            return null;
+          }
+
+          const humMin = parseLocaleNumber(cells[4]);
+          const humMean = parseLocaleNumber(cells[5]);
+          const humMax = parseLocaleNumber(cells[6]);
+
+          return {
+            day: cells[0].padStart(2, "0"),
+            min,
+            mean,
+            max,
+            humMin: humMin ?? 0,
+            humMean: humMean ?? 0,
+            humMax: humMax ?? 0,
+            rain: parseLocaleNumber(cells[13]) ?? 0
+          };
+        })
+        .filter(Boolean);
+    }
+
+    function describeTrend(history) {
+      const means = history.map((item) => item.mean);
+      const average = means.reduce((sum, value) => sum + value, 0) / means.length;
+      const hottest = history.reduce((current, item) => item.max > current.max ? item : current, history[0]);
+      const rain = history.reduce((sum, item) => sum + item.rain, 0);
+
+      return {
+        average: average.toFixed(1).replace(".", ","),
+        hottestDay: hottest.day,
+        hottestValue: hottest.max.toFixed(1).replace(".", ","),
+        rain: rain.toFixed(1).replace(".", ",")
+      };
+    }
+
+    function createPath(points) {
+      return points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ");
+    }
+
+    function renderTemperatureChart(history) {
+      if (!history.length) {
+        return '<p class="avamet-chart-error">No hi ha prou dades diàries per dibuixar la gràfica.</p>';
+      }
+
+      const width = 560;
+      const height = 150;
+      const padding = { top: 14, right: 16, bottom: 28, left: 34 };
+      const chartWidth = width - padding.left - padding.right;
+      const chartHeight = height - padding.top - padding.bottom;
+      const values = history.flatMap((item) => [item.min, item.mean, item.max]);
+      const minValue = Math.floor(Math.min(...values) - 1);
+      const maxValue = Math.ceil(Math.max(...values) + 1);
+      const range = Math.max(maxValue - minValue, 2);
+      const stepX = history.length === 1 ? 0 : chartWidth / (history.length - 1);
+      const ticks = 4;
+
+      const projectPoint = (index, value) => {
+        const x = padding.left + stepX * index;
+        const y = padding.top + chartHeight - ((value - minValue) / range) * chartHeight;
+        return {
+          x: x.toFixed(1),
+          y: y.toFixed(1)
+        };
+      };
+
+      const gridLines = Array.from({ length: ticks + 1 }, (_, index) => {
+        const ratio = index / ticks;
+        const y = padding.top + chartHeight - ratio * chartHeight;
+        const value = (minValue + ratio * range).toFixed(0);
+        return `
+          <line x1="${padding.left}" y1="${y.toFixed(1)}" x2="${(width - padding.right).toFixed(1)}" y2="${y.toFixed(1)}" stroke="${CHART_COLORS.grid}" stroke-width="1" />
+          <text x="${padding.left - 8}" y="${(y + 4).toFixed(1)}" text-anchor="end" fill="${CHART_COLORS.text}" font-size="11">${value}</text>
+        `;
+      }).join("");
+
+      const labels = history.map((item, index) => {
+        const x = padding.left + stepX * index;
+        return `<text x="${x.toFixed(1)}" y="${height - 10}" text-anchor="middle" fill="${CHART_COLORS.text}" font-size="11">${item.day}</text>`;
+      }).join("");
+
+      const series = [
+        { key: "min", color: CHART_COLORS.min, points: history.map((item, index) => projectPoint(index, item.min)) },
+        { key: "mean", color: CHART_COLORS.mean, points: history.map((item, index) => projectPoint(index, item.mean)) },
+        { key: "max", color: CHART_COLORS.max, points: history.map((item, index) => projectPoint(index, item.max)) }
+      ];
+
+      const polylines = series.map((line) => `
+        <path d="${createPath(line.points)}" fill="none" stroke="${line.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        ${line.points.map((point) => `<circle cx="${point.x}" cy="${point.y}" r="3.5" fill="${line.color}" />`).join("")}
+      `).join("");
+
+      return `
+        <div class="avamet-chart" aria-label="Gràfica de temperatures diàries AVAMET">
+          <svg viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="chartTitleT chartDescT">
+            <title id="chartTitleT">Temperatures diàries AVAMET</title>
+            <desc id="chartDescT">Gràfica amb temperatures mínima, mitjana i màxima obtingudes de la taula històrica diària.</desc>
+            ${gridLines}
+            <line x1="${padding.left}" y1="${(height - padding.bottom).toFixed(1)}" x2="${(width - padding.right).toFixed(1)}" y2="${(height - padding.bottom).toFixed(1)}" stroke="${CHART_COLORS.grid}" stroke-width="1" />
+            ${polylines}
+            ${labels}
+          </svg>
+        </div>
+      `;
+    }
+
+    function renderHumidityChart(history) {
+      if (!history.length) {
+        return '<p class="avamet-chart-error">No hi ha prou dades diàries per dibuixar la gràfica.</p>';
+      }
+
+      const width = 560;
+      const height = 150;
+      const padding = { top: 14, right: 16, bottom: 28, left: 34 };
+      const chartWidth = width - padding.left - padding.right;
+      const chartHeight = height - padding.top - padding.bottom;
+      const values = history.flatMap((item) => [item.humMin, item.humMean, item.humMax]);
+      const minValue = Math.max(0, Math.floor(Math.min(...values) - 2));
+      const maxValue = Math.min(100, Math.ceil(Math.max(...values) + 2));
+      const range = Math.max(maxValue - minValue, 2);
+      const stepX = history.length === 1 ? 0 : chartWidth / (history.length - 1);
+      const ticks = 3;
+
+      const projectPoint = (index, value) => {
+        const x = padding.left + stepX * index;
+        const y = padding.top + chartHeight - ((value - minValue) / range) * chartHeight;
+        return { x: x.toFixed(1), y: y.toFixed(1) };
+      };
+
+      const gridLines = Array.from({ length: ticks + 1 }, (_, index) => {
+        const ratio = index / ticks;
+        const y = padding.top + chartHeight - ratio * chartHeight;
+        const value = (minValue + ratio * range).toFixed(0);
+        return `
+          <line x1="${padding.left}" y1="${y.toFixed(1)}" x2="${(width - padding.right).toFixed(1)}" y2="${y.toFixed(1)}" stroke="${CHART_COLORS.grid}" stroke-width="1" />
+          <text x="${padding.left - 8}" y="${(y + 4).toFixed(1)}" text-anchor="end" fill="${CHART_COLORS.text}" font-size="10">${value}</text>
+        `;
+      }).join("");
+
+      const labels = history.map((item, index) => {
+        const x = padding.left + stepX * index;
+        return `<text x="${x.toFixed(1)}" y="${height - 8}" text-anchor="middle" fill="${CHART_COLORS.text}" font-size="10">${item.day}</text>`;
+      }).join("");
+
+      const series = [
+        { color: CHART_COLORS.min, getVal: (item) => item.humMin },
+        { color: CHART_COLORS.mean, getVal: (item) => item.humMean },
+        { color: CHART_COLORS.max, getVal: (item) => item.humMax }
+      ];
+
+      const polylines = series.map(({ color, getVal }) => {
+        const points = history.map((item, index) => projectPoint(index, getVal(item)));
+        return `
+          <path d="${createPath(points)}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          ${points.map((p) => `<circle cx="${p.x}" cy="${p.y}" r="3" fill="${color}" />`).join("")}
+        `;
+      }).join("");
+
+      return `
+        <div class="avamet-chart" aria-label="Gràfica d'humitat relativa diària AVAMET">
+          <svg viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="chartTitleH chartDescH">
+            <title id="chartTitleH">Humitat relativa diària AVAMET</title>
+            <desc id="chartDescH">Gràfica amb humitat relativa mínima, mitjana i màxima obtingudes de la taula històrica diària.</desc>
+            ${gridLines}
+            <line x1="${padding.left}" y1="${(height - padding.bottom).toFixed(1)}" x2="${(width - padding.right).toFixed(1)}" y2="${(height - padding.bottom).toFixed(1)}" stroke="${CHART_COLORS.grid}" stroke-width="1" />
+            ${polylines}
+            ${labels}
+          </svg>
+        </div>
+      `;
+    }
+
+    function renderRainChart(history) {
+      if (!history.length) {
+        return '<p class="avamet-chart-error">No hi ha prou dades diàries per dibuixar la gràfica.</p>';
+      }
+
+      const width = 560;
+      const height = 150;
+      const padding = { top: 14, right: 16, bottom: 28, left: 34 };
+      const chartWidth = width - padding.left - padding.right;
+      const chartHeight = height - padding.top - padding.bottom;
+      const values = history.map((item) => item.rain);
+      const maxValue = Math.max(Math.ceil(Math.max(...values) + 0.5), 2);
+      const stepX = chartWidth / history.length;
+      const barW = Math.max(stepX * 0.6, 2);
+      const ticks = 3;
+
+      const gridLines = Array.from({ length: ticks + 1 }, (_, index) => {
+        const ratio = index / ticks;
+        const y = padding.top + chartHeight - ratio * chartHeight;
+        const value = (ratio * maxValue).toFixed(0);
+        return `
+          <line x1="${padding.left}" y1="${y.toFixed(1)}" x2="${(width - padding.right).toFixed(1)}" y2="${y.toFixed(1)}" stroke="${CHART_COLORS.grid}" stroke-width="1" />
+          <text x="${padding.left - 8}" y="${(y + 4).toFixed(1)}" text-anchor="end" fill="${CHART_COLORS.text}" font-size="10">${value}</text>
+        `;
+      }).join("");
+
+      const bars = history.map((item, index) => {
+        const cx = padding.left + stepX * index + stepX / 2;
+        const barH = Math.max((item.rain / maxValue) * chartHeight, item.rain > 0 ? 2 : 0);
+        const y = padding.top + chartHeight - barH;
+        return `
+          <rect x="${(cx - barW / 2).toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${barH.toFixed(1)}" fill="#4cc9f0" rx="2" />
+          <text x="${cx.toFixed(1)}" y="${height - 8}" text-anchor="middle" fill="${CHART_COLORS.text}" font-size="10">${item.day}</text>
+        `;
+      }).join("");
+
+      return `
+        <div class="avamet-chart" aria-label="Gràfica de precipitació diària AVAMET">
+          <svg viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="chartTitleR chartDescR">
+            <title id="chartTitleR">Precipitació diària AVAMET</title>
+            <desc id="chartDescR">Gràfica de barres amb la precipitació diària en mm obtinguda de la taula històrica.</desc>
+            ${gridLines}
+            <line x1="${padding.left}" y1="${(height - padding.bottom).toFixed(1)}" x2="${(width - padding.right).toFixed(1)}" y2="${(height - padding.bottom).toFixed(1)}" stroke="${CHART_COLORS.grid}" stroke-width="1" />
+            ${bars}
+          </svg>
+        </div>
+      `;
+    }
+
+    function createAvametChart(history) {
+      if (!history.length) {
+        const card = document.createElement("section");
+        card.className = "avamet-chart-card";
+        card.innerHTML = `
+          <div class="avamet-chart-head">
+            <div>
+              <h2 class="avamet-chart-title">Tendència diària</h2>
+              <p class="avamet-chart-subtitle">Sense dades utilisables en avamet-hist-cache.html</p>
+            </div>
+          </div>
+          <p class="avamet-chart-error">No s'ha trobat una taula diària vàlida en <code>table.tDades</code>.</p>
+        `;
+        return card;
+      }
+
+      const summary = describeTrend(history);
+      const card = document.createElement("section");
+      card.className = "avamet-chart-card";
+      card.innerHTML = `
+        <div class="avamet-chart-head">
+          <div><h2 class="avamet-chart-title">Temperatura (°C)</h2></div>
+        </div>
+        ${renderTemperatureChart(history)}
+        <div class="avamet-chart-legend" aria-hidden="true">
+          <span><i style="background:${CHART_COLORS.min}"></i>Mínima</span>
+          <span><i style="background:${CHART_COLORS.mean}"></i>Mitjana</span>
+          <span><i style="background:${CHART_COLORS.max}"></i>Màxima</span>
+        </div>
+
+        <div class="avamet-chart-head" style="margin-top:10px">
+          <div><h2 class="avamet-chart-title">Humitat relativa (%)</h2></div>
+        </div>
+        ${renderHumidityChart(history)}
+        <div class="avamet-chart-legend" aria-hidden="true">
+          <span><i style="background:${CHART_COLORS.min}"></i>Mínima</span>
+          <span><i style="background:${CHART_COLORS.mean}"></i>Mitjana</span>
+          <span><i style="background:${CHART_COLORS.max}"></i>Màxima</span>
+        </div>
+
+        <div class="avamet-chart-head" style="margin-top:10px">
+          <div><h2 class="avamet-chart-title">Precipitació (mm)</h2></div>
+        </div>
+        ${renderRainChart(history)}
+
+        <ul class="avamet-chart-meta">
+          <li>Tª mèdia: ${summary.average} °C</li>
+          <li>Pic: dia ${summary.hottestDay} amb ${summary.hottestValue} °C</li>
+          <li>Pluja acumulada: ${summary.rain} mm</li>
+        </ul>
+      `;
+      return card;
+    }
+
+    function createAvametChartError(message) {
+      const card = document.createElement("section");
+      card.className = "avamet-chart-card";
+      card.innerHTML = `
+        <div class="avamet-chart-head">
+          <div>
+            <h2 class="avamet-chart-title">Tendència diària</h2>
+            <p class="avamet-chart-subtitle">No s'ha pogut generar la gràfica històrica</p>
+          </div>
+        </div>
+        <p class="avamet-chart-error">${message}</p>
+      `;
+      return card;
+    }
+
     async function updateAvamet() {
       const avametContent = document.getElementById("avametContent");
       const avStatus = document.getElementById("avStatus");
@@ -300,7 +709,7 @@
 
       try {
         if (avStatus) {
-          avStatus.textContent = "Actualizando...";
+          avStatus.textContent = "Actualitzant...";
         }
 
         const response = await fetch(withNoCache(AVAMET_URL), {
@@ -316,13 +725,36 @@
         const interior = doc.getElementById("interior");
 
         if (!interior) {
-          throw new Error("No existe #interior en avamet-cache.html");
+          throw new Error("No existeix #interior en avamet-cache.html");
         }
 
-        avametContent.innerHTML = interior.innerHTML;
+        const liveBlock = document.createElement("div");
+        liveBlock.className = "avamet-live";
+        liveBlock.innerHTML = interior.innerHTML;
+
+        let chartBlock = createAvametChartError("No s'ha pogut carregar l'històric encara.");
+
+        try {
+          const histResponse = await fetch(withNoCache(AVAMET_HIST_URL), {
+            cache: "no-store"
+          });
+
+          if (!histResponse.ok) {
+            throw new Error(`HTTP ${histResponse.status}`);
+          }
+
+          const histHtml = await histResponse.text();
+          const histDoc = new DOMParser().parseFromString(histHtml, "text/html");
+          const history = extractAvametHistory(histDoc);
+          chartBlock = createAvametChart(history);
+        } catch (histError) {
+          chartBlock = createAvametChartError(`Històric no disponible (${histError.message})`);
+        }
+
+        avametContent.replaceChildren(liveBlock, chartBlock);
         avTime.textContent = now;
       } catch (error) {
-        avametContent.innerHTML = `<div class="avamet-empty">No se pudo cargar AVAMET (${error.message})</div>`;
+        avametContent.innerHTML = `<div class="avamet-empty">No s'ha pogut carregar AVAMET (${error.message})</div>`;
         avTime.textContent = now;
       }
     }

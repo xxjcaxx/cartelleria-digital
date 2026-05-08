@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Xàtiva — European Data Flow Map</title>
+
+  <!-- amCharts 5: load order matters: index first, then map, then geodata, then themes -->
+  <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/geodata/worldLow.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/themes/Dark.js"></script>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #12103a;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: #d8d6f5;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: rgba(40,36,140,0.45);
+      border-bottom: 1px solid rgba(110,106,230,0.35);
+      flex-shrink: 0;
+      gap: 16px;
+    }
+
+    .header-title {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .header-title img {
+      height: 44px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 0 8px rgba(255,215,0,0.35));
+    }
+
+    .header-title h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color: #ffd700;
+      text-shadow: 0 0 18px rgba(255,215,0,0.45);
+    }
+
+    .header-title span {
+      font-size: 0.8rem;
+      color: #9896cc;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* ── Toggle button ── */
+    #toggleBtn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      border: 1.5px solid rgba(160,156,255,0.75);
+      border-radius: 6px;
+      background: rgba(100,96,210,0.20);
+      color: #c4c0ff;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: background 0.25s, box-shadow 0.25s;
+      flex-shrink: 0;
+    }
+    #toggleBtn:hover {
+      background: rgba(100,96,210,0.42);
+      box-shadow: 0 0 18px rgba(130,126,255,0.55);
+    }
+    #toggleBtn svg { flex-shrink: 0; }
+
+    /* ── Legend strip ── */
+    .legend {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 0.74rem;
+      color: #9896cc;
+    }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .legend-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: #ffd700; border: 2px solid #fff;
+    }
+    .legend-line {
+      width: 28px; height: 3px;
+      background: linear-gradient(90deg, rgba(110,106,230,0.4), rgba(170,166,255,1));
+      border-radius: 2px;
+    }
+
+    /* ── Map container ── */
+    #mapShell {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+    }
+
+    #chartdiv {
+      background: #ffffff;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      pointer-events: none;
+    }
+
+    #infographic {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      z-index: 20;
+      width: min(360px, calc(100% - 36px));
+      padding: 16px 16px 14px;
+      border: 1px solid rgba(175, 171, 255, 0.30);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(28, 24, 84, 0.88), rgba(18, 16, 58, 0.82));
+      box-shadow: 0 20px 40px rgba(5, 4, 22, 0.34), 0 0 24px rgba(110, 106, 230, 0.18);
+      backdrop-filter: blur(10px);
+      pointer-events: none;
+      overflow: hidden;
+      animation: panelEnter 0.9s ease-out both;
+    }
+
+    #infographic::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(255, 215, 0, 0.9), rgba(170, 166, 255, 0.85));
+      opacity: 0.9;
+    }
+
+    .infographic-kicker {
+      margin-bottom: 6px;
+      color: #b3b0f9;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .infographic-title {
+      margin-bottom: 6px;
+      color: #ffffff;
+      font-size: 1.1rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .infographic-subtitle {
+      margin-bottom: 14px;
+      color: #b9b6ea;
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .infographic-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .infographic-card {
+      padding: 12px 12px 10px;
+      border: 1px solid rgba(163, 159, 255, 0.16);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.04);
+      transform: translateY(12px);
+      opacity: 0;
+      animation: cardEnter 0.7s ease-out forwards;
+    }
+
+    .infographic-card:nth-child(1) { animation-delay: 0.18s; }
+    .infographic-card:nth-child(2) { animation-delay: 0.28s; }
+    .infographic-card:nth-child(3) { animation-delay: 0.38s; }
+
+    .infographic-label {
+      margin-bottom: 6px;
+      color: #a7a3da;
+      font-size: 0.7rem;
+      font-weight: 600;
+      line-height: 1.3;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .infographic-value {
+      color: #ffffff;
+      font-size: 1.9rem;
+      font-weight: 800;
+      line-height: 1;
+      text-shadow: 0 0 18px rgba(170, 166, 255, 0.28);
+    }
+
+    .infographic-suffix {
+      color: #ffd700;
+      margin-left: 2px;
+    }
+
+    .infographic-note {
+      margin-top: 6px;
+      color: #d1cff8;
+      font-size: 0.76rem;
+      line-height: 1.3;
+    }
+
+    @keyframes panelEnter {
+      from {
+        opacity: 0;
+        transform: translateY(-14px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes cardEnter {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 720px) {
+      #infographic {
+        width: min(320px, calc(100% - 24px));
+        top: 12px;
+        left: 12px;
+        padding: 14px;
+      }
+
+      .infographic-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-title">
+    <h1>Erasmus+</h1>
+    <span>Destinos Europeos</span>
+  </div>
+<img src="logosimarroblanco.png" alt="Erasmus+" style="width: 300px;" />
+  <img src="erasmus_plus_ok.jpg" alt="Erasmus+" style="width: 300px;" />
+</header>
+
+<div id="mapShell">
+  <div id="chartdiv"></div>
+  <div id="infographic" aria-label="Infografía del consorcio"></div>
+</div>
+
+<script>
+(async function () {
+  "use strict";
+
+  /* ── 1. Origin city ─────────────────────────────────────────── */
+  var ORIGIN = { name: "Xàtiva", latitude: 38.986, longitude: -0.535 };
+
+  var INFOGRAPHIC_DATA = {
+    kicker: "Consorcio Erasmus+",
+    title: "Impacto de movilidad internacional",
+    subtitle: "Consorcio liderado por el IES Simarro con 14 institutos y más de 300 empresas colaboradoras en Europa.",
+    stats: [
+      {
+        label: "Institutos",
+        value: 14,
+        suffix: "",
+        note: "Centros participantes en el consorcio"
+      },
+      {
+        label: "Empresas",
+        value: 300,
+        suffix: "+",
+        note: "Entidades colaboradoras"
+      },
+      {
+        label: "Movilidades",
+        value: 1050,
+        suffix: "+",
+        note: "Alumnado movilizado desde 2017"
+      },
+      {
+        label: "Plan 2025",
+        value: 140,
+        suffix: "+",
+        note: "Movilidades de alumnado y personal"
+      }
+    ]
+  };
+
+  /* ── 2. Destination cities ──────────────────────────────────── */
+  var DEFAULT_DESTINATIONS = [
+    { name: "London",        latitude: 51.51,  longitude: -0.13  },
+    { name: "Paris",         latitude: 48.86,  longitude:  2.35  },
+    { name: "Berlin",        latitude: 52.52,  longitude: 13.40  },
+    { name: "Rome",          latitude: 41.90,  longitude: 12.50  },
+    { name: "Amsterdam",     latitude: 52.37,  longitude:  4.90  },
+    { name: "Lisbon",        latitude: 38.72,  longitude: -9.14  },
+    { name: "Vienna",        latitude: 48.21,  longitude: 16.37  },
+    { name: "Brussels",      latitude: 50.85,  longitude:  4.35  },
+    { name: "Zurich",        latitude: 47.38,  longitude:  8.54  },
+    { name: "Prague",        latitude: 50.08,  longitude: 14.44  },
+    { name: "Warsaw",        latitude: 52.23,  longitude: 21.01  },
+    { name: "Athens",        latitude: 37.98,  longitude: 23.73  },
+    { name: "Stockholm",     latitude: 59.33,  longitude: 18.07  },
+    { name: "Helsinki",      latitude: 60.17,  longitude: 24.94  },
+  ];
+
+  function cloneDestinations(destinations) {
+    return destinations.map(function (item) {
+      return {
+        name: item.name,
+        latitude: item.latitude,
+        longitude: item.longitude
+      };
+    });
+  }
+
+  function formatNumber(value) {
+    return new Intl.NumberFormat("es-ES").format(Math.round(value));
+  }
+
+  function animateCounter(element, targetValue, duration) {
+    var startTime = null;
+
+    function step(timestamp) {
+      if (!startTime) {
+        startTime = timestamp;
+      }
+
+      var progress = Math.min((timestamp - startTime) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      element.textContent = formatNumber(targetValue * eased);
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        element.textContent = formatNumber(targetValue);
+      }
+    }
+
+    requestAnimationFrame(step);
+  }
+
+  function renderInfographic(data) {
+    var container = document.getElementById("infographic");
+    if (!container || !data) {
+      return;
+    }
+
+    var cardsMarkup = data.stats.map(function (item) {
+      return [
+        '<div class="infographic-card">',
+          '<div class="infographic-label">' + item.label + '</div>',
+          '<div class="infographic-value">',
+            '<span class="infographic-number" data-target="' + item.value + '">0</span>',
+            item.suffix ? '<span class="infographic-suffix">' + item.suffix + '</span>' : '',
+          '</div>',
+          '<div class="infographic-note">' + item.note + '</div>',
+        '</div>'
+      ].join("");
+    }).join("");
+
+    container.innerHTML = [
+      '<div class="infographic-kicker">' + data.kicker + '</div>',
+      '<div class="infographic-title">' + data.title + '</div>',
+      '<div class="infographic-subtitle">' + data.subtitle + '</div>',
+      '<div class="infographic-grid">' + cardsMarkup + '</div>'
+    ].join("");
+
+    container.querySelectorAll(".infographic-number").forEach(function (node, index) {
+      var target = Number(node.getAttribute("data-target")) || 0;
+      setTimeout(function () {
+        animateCounter(node, target, 1300 + index * 180);
+      }, 250 + index * 120);
+    });
+  }
+
+  renderInfographic(INFOGRAPHIC_DATA);
+
+  function parseCsvLine(line) {
+    var values = [];
+    var current = "";
+    var inQuotes = false;
+
+    for (var i = 0; i < line.length; i++) {
+      var char = line[i];
+      var next = line[i + 1];
+
+      if (char === '"') {
+        if (inQuotes && next === '"') {
+          current += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (char === "," && !inQuotes) {
+        values.push(current.trim());
+        current = "";
+      } else {
+        current += char;
+      }
+    }
+
+    values.push(current.trim());
+    return values;
+  }
+
+  function parseDestinationsCsv(text) {
+    var lines = text.split(/\r?\n/).map(function (line) {
+      return line.trim();
+    }).filter(Boolean);
+
+    if (!lines.length) {
+      return [];
+    }
+
+    var firstRow = parseCsvLine(lines[0]).map(function (value) {
+      return value.replace(/^"|"$/g, "");
+    });
+    var hasHeader = firstRow[0] && firstRow[0].toLowerCase() === "city";
+    var startIndex = hasHeader ? 1 : 0;
+    var destinations = [];
+
+    for (var i = startIndex; i < lines.length; i++) {
+      var row = parseCsvLine(lines[i]).map(function (value) {
+        return value.replace(/^"|"$/g, "");
+      });
+
+      if (row.length < 3) {
+        continue;
+      }
+
+      var latitude = Number(row[1]);
+      var longitude = Number(row[2]);
+
+      if (!row[0] || Number.isNaN(latitude) || Number.isNaN(longitude)) {
+        continue;
+      }
+
+      destinations.push({
+        name: row[0],
+        latitude: latitude,
+        longitude: longitude
+      });
+    }
+
+    return destinations;
+  }
+
+  async function loadDestinations() {
+    try {
+      var response = await fetch("zones.csv", { cache: "no-store" });
+      if (!response.ok) {
+        throw new Error("HTTP " + response.status);
+      }
+
+      var csvText = await response.text();
+      var csvDestinations = parseDestinationsCsv(csvText);
+
+      if (csvDestinations.length) {
+        return csvDestinations;
+      }
+    } catch (error) {
+      console.warn("Could not load zones.csv, using default destinations.", error);
+    }
+
+    return cloneDestinations(DEFAULT_DESTINATIONS);
+  }
+
+  var DESTINATIONS = await loadDestinations();
+
+  /* ── 3. Helpers ─────────────────────────────────────────────── */
+  // Haversine distance in km
+  function haversine(lat1, lon1, lat2, lon2) {
+    var R = 6371;
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLon = (lon2 - lon1) * Math.PI / 180;
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  // Compute max distance for normalisation
+  var maxDist = 0;
+  DESTINATIONS.forEach(function (d) {
+    var dist = haversine(ORIGIN.latitude, ORIGIN.longitude, d.latitude, d.longitude);
+    d._dist = dist;
+    if (dist > maxDist) maxDist = dist;
+  });
+
+  /* ── 5. Root & themes ───────────────────────────────────────── */
+  var root = am5.Root.new("chartdiv");
+  root.setThemes([
+    am5themes_Animated.new(root),
+    am5themes_Dark.new(root)
+  ]);
+
+  /* ── 6. Map chart ───────────────────────────────────────────── */
+  var chart = root.container.children.push(
+    am5map.MapChart.new(root, {
+      panX:       "none",
+      panY:       "none",
+      wheelX:     "none",
+      wheelY:     "none",
+      pinchZoom:  false,
+      projection: am5map.geoMercator(),
+      homeZoomLevel: 6,
+      homeGeoPoint: { latitude: ORIGIN.latitude, longitude: ORIGIN.longitude }
+    })
+  );
+  chart.set("background", am5.Rectangle.new(root, {
+    fill: am5.color(0x42407a),
+    fillOpacity: 1
+  }));
+
+  /* ── 7. World polygons ──────────────────────────────────────── */
+  var polygonSeries = chart.series.push(
+    am5map.MapPolygonSeries.new(root, {
+      geoJSON: am5geodata_worldLow
+    })
+  );
+  polygonSeries.mapPolygons.template.setAll({
+    fill:            am5.color(0x1a183c),
+    stroke:          am5.color(0x38368a),
+    strokeWidth:     0.6,
+    fillOpacity:     0.95,
+    interactive:     false
+  });
+
+  /* ── 8. Graticule (grid overlay) ────────────────────────────── */
+  var graticuleSeries = chart.series.push(
+    am5map.GraticuleSeries.new(root, {
+      step: 15
+    })
+  );
+  graticuleSeries.mapLines.template.setAll({
+    stroke:        am5.color(0x4e4c9e),
+    strokeOpacity: 0.55,
+    strokeWidth:   0.5,
+    strokeDasharray: [3, 5]
+  });
+
+  /* ── 9. Flow-line series ────────────────────────────────────── */
+  var lineSeries = chart.series.push(
+    am5map.MapLineSeries.new(root, {})
+  );
+  lineSeries.mapLines.template.setAll({
+    stroke:          am5.color(0x7a78e8),
+    strokeOpacity:   0.7,
+    strokeWidth:     1.5,
+    strokeDasharray: [5, 4]
+  });
+
+  /* ── 10. City-point series ──────────────────────────────────── */
+  var cityPointSeries = chart.series.push(
+    am5map.MapPointSeries.new(root, {
+      latitudeField:  "latitude",
+      longitudeField: "longitude"
+    })
+  );
+
+  cityPointSeries.bullets.push(function () {
+    var outer = am5.Circle.new(root, {
+      radius:          9,
+      fill:            am5.color(0xffd700),
+      stroke:          am5.color(0xffffff),
+      strokeWidth:     2
+    });
+
+    // Inner dot
+    var container = am5.Container.new(root, {});
+    container.children.push(outer);
+    container.children.push(
+      am5.Circle.new(root, {
+        radius:   4,
+        fill:     am5.color(0xffffff),
+        opacity:  0.85,
+        centerX:  am5.p50,
+        centerY:  am5.p50
+      })
+    );
+
+    return am5.Bullet.new(root, { sprite: container });
+  });
+
+  // Label bullet for every city
+  cityPointSeries.bullets.push(function () {
+    return am5.Bullet.new(root, {
+      locationX: 0.5,
+      sprite: am5.Label.new(root, {
+        text:         "{name}",
+        populateText: true,
+        fill:          am5.color(0xe0deff),
+        fontSize:     11,
+        fontWeight:   "600",
+        dy:           -20,
+        centerX:      am5.p50,
+        background:   am5.RoundedRectangle.new(root, {
+          fill:        am5.color(0x12103a),
+          fillOpacity: 0.72,
+          cornerRadiusTL: 3, cornerRadiusTR: 3,
+          cornerRadiusBL: 3, cornerRadiusBR: 3
+        })
+      })
+    });
+  });
+
+  /* ── 11. Origin label (Xàtiva) ──────────────────────────────── */
+  var originLabelSeries = chart.series.push(
+    am5map.MapPointSeries.new(root, {
+      latitudeField:  "latitude",
+      longitudeField: "longitude"
+    })
+  );
+  originLabelSeries.bullets.push(function () {
+    return am5.Bullet.new(root, {
+      locationX: 0.5,
+      sprite: am5.Label.new(root, {
+        text:         "{name}",
+        populateText: true,
+        fill:         am5.color(0xffd700),
+        fontSize:     12,
+        fontWeight:   "700",
+        dy:           -22,
+        centerX:      am5.p50,
+        background:   am5.RoundedRectangle.new(root, {
+          fill:        am5.color(0x12103a),
+          fillOpacity: 0.75,
+          cornerRadiusTL: 3, cornerRadiusTR: 3,
+          cornerRadiusBL: 3, cornerRadiusBR: 3
+        })
+      })
+    });
+  });
+
+  /* ── 12. Animated-bullet series (flowing dot per line) ───────── */
+  // We create one MapPointSeries per line so each bullet can animate
+  // independently at a speed proportional to geographic distance.
+  var flowSeriesArray = [];
+
+  /* ── 13. Build lines, city markers, and flowing dots ─────────── */
+  var cityData = [{ name: ORIGIN.name, latitude: ORIGIN.latitude, longitude: ORIGIN.longitude }];
+
+  DESTINATIONS.forEach(function (dest, idx) {
+    // Line from Xàtiva → destination (GeoJSON LineString — coords are [lon, lat])
+    var lineDataItem = lineSeries.pushDataItem({
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [ORIGIN.longitude, ORIGIN.latitude],
+          [dest.longitude,   dest.latitude  ]
+        ]
+      }
+    });
+
+    // Duration proportional to distance  (1 500 ms .. 5 000 ms)
+    var MIN_DUR = 1500, MAX_DUR = 5000;
+    var duration = MIN_DUR + (dest._dist / maxDist) * (MAX_DUR - MIN_DUR);
+
+    // Stagger multiple dots per route
+    var dotsPerLine = 3;
+    for (var k = 0; k < dotsPerLine; k++) {
+      var flowSeries = chart.series.push(
+        am5map.MapPointSeries.new(root, {})
+      );
+      flowSeriesArray.push(flowSeries);
+
+      flowSeries.bullets.push(function () {
+        var circle = am5.Circle.new(root, {
+          radius:      5,
+          fill:        am5.color(0x9a98ff),
+          stroke:      am5.color(0xd0ceff),
+          strokeWidth: 1,
+          opacity:     0.0
+        });
+        return am5.Bullet.new(root, { sprite: circle });
+      });
+
+      // Stagger dots evenly by delaying their start rather than offsetting position
+      var staggerDelay = (k / dotsPerLine) * duration;
+
+      (function (series, lineItem, dur, delay) {
+        var pointDataItem = series.pushDataItem({
+          lineDataItem:   lineItem,
+          positionOnLine: 0,
+          autoRotate:     true
+        });
+
+        // Watch position to drive opacity (pos is always 0..1)
+        pointDataItem.on("positionOnLine", function (pos) {
+          var bullet = pointDataItem.bullets[0];
+          if (!bullet) return;
+          var sprite = bullet.get("sprite");
+          if (!sprite) return;
+          var opacity;
+          if (pos < 0.12)       { opacity = pos / 0.12; }
+          else if (pos < 0.80)  { opacity = 1; }
+          else                  { opacity = (1 - pos) / 0.20; }
+          sprite.set("opacity", Math.max(0, Math.min(1, opacity)) * 0.85);
+        });
+
+        // Start animation after stagger delay; loops restart from 0 each time
+        setTimeout(function () {
+          pointDataItem.animate({
+            key:      "positionOnLine",
+            from:     0,
+            to:       1,
+            duration: dur,
+            loops:    Infinity,
+            easing:   am5.ease.linear
+          });
+        }, delay);
+
+      })(flowSeries, lineDataItem, duration, staggerDelay);
+    }
+
+    // Collect city marker
+    cityData.push({ name: dest.name, latitude: dest.latitude, longitude: dest.longitude });
+  });
+
+  /* ── 14. Set city data AFTER series are fully configured ─────── */
+  cityPointSeries.data.setAll(cityData);
+  originLabelSeries.data.setAll([
+    { name: ORIGIN.name, latitude: ORIGIN.latitude, longitude: ORIGIN.longitude }
+  ]);
+
+  /* ── 15. Origin marker (larger, bright gold) ─────────────────── */
+  // Override bullet for origin within cityPointSeries via adapter
+  cityPointSeries.bullets.push(function (root2, series, dataItem) {
+    // Only attach extra glow for the origin
+    if (dataItem.dataContext.name !== ORIGIN.name) return undefined;
+    var glow = am5.Circle.new(root, {
+      radius:      14,
+      fill:        am5.color(0xffd700),
+      fillOpacity: 0.18,
+      stroke:      am5.color(0xffd700),
+      strokeOpacity: 0.55,
+      strokeWidth: 1
+    });
+    // Looping glow pulse
+    glow.animate({ key: "radius",      from: 12, to: 22, duration: 1400, loops: Infinity, easing: am5.ease.out(am5.ease.cubic) });
+    glow.animate({ key: "fillOpacity", from: 0.18, to: 0,  duration: 1400, loops: Infinity, easing: am5.ease.out(am5.ease.cubic) });
+    return am5.Bullet.new(root, { sprite: glow });
+  });
+
+  /* ── 16. Zoom / pan to Xàtiva on load ───────────────────────── */
+  chart.events.once("boundschanged", function () {
+    var focusPoint = { latitude: ORIGIN.latitude, longitude: ORIGIN.longitude };
+    var initialZoom =  8;
+    var targetZoom = initialZoom + 2;
+
+    chart.zoomToGeoPoint(focusPoint, initialZoom, true);
+
+    setTimeout(function () {
+      chart.zoomToGeoPoint(focusPoint, targetZoom, true, 20000);
+    }, 250);
+  });
+
+  /* ── 17. Entrance animation ─────────────────────────────────── */
+  chart.appear(1000, 100);
+
+  /* ── 18. Static map mode (no user interaction) ─────────────── */
+
+  /* ── 19. Dispose on page unload ─────────────────────────────── */
+  window.addEventListener("beforeunload", function () {
+    root.dispose();
+  });
+
+})();
+</script>
+</body>
+</html>

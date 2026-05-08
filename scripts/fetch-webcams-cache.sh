@@ -7,6 +7,7 @@ INTERVAL_SECONDS="${INTERVAL_SECONDS:-600}"
 CAM1_URL="https://gotafreda.es/estacions/c23m145e15/webcam1/webcam.jpg"
 CAM2_URL="https://gotafreda.es/estacions/c23m145e15/webcam2/webcam.jpg"
 AVAMET_URL="https://www.avamet.org/mx-mxo.php?id=c23m145e15"
+AVAMET_HIST="https://www.avamet.org/mx-mes.php?id=c23m145e15&data=#"
 
 mkdir -p "$CACHE_DIR"
 
@@ -42,5 +43,6 @@ while true; do
   fetch_to_file "$CAM1_URL" "$CACHE_DIR/webcam1-cache.jpg"
   fetch_to_file "$CAM2_URL" "$CACHE_DIR/webcam2-cache.jpg"
   fetch_to_file "$AVAMET_URL" "$CACHE_DIR/avamet-cache.html"
+  fetch_to_file "$AVAMET_HIST" "$CACHE_DIR/avamet-hist-cache.html"
   sleep "$INTERVAL_SECONDS"
 done

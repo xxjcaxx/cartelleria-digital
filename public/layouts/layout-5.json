@@ -1,0 +1,18 @@
+{
+  "id": "layout-5",
+  "durationMs": 30000,
+  "regions": [
+    {
+      "id": "cicles-fullscreen",
+      "x": 0,
+      "y": 0,
+      "width": 100,
+      "height": 100,
+      "media": {
+        "type": "html",
+        "src": "/layouts/media/web/index.html",
+        "title": "Cicles"
+      }
+    }
+  ]
+}

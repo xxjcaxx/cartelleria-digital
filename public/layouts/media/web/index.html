@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Família d'Informàtica i Comunicacions · IES Dr. Lluís Simarro · Xàtiva 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; border-radius: 0; }
+
+:root {
+  --w: 1920px;
+  --h: 1080px;
+  --fit: 0.84;
+  --bg: #fcc501;
+  --ink: #011e4a;
+  --white: #ffffff;
+  --safe-margin: 80px;
+  --gutter: 40px;
+  --module-padding: 32px;
+  --stack-sm: 16px;
+  --stack-md: 48px;
+  --speed: .45s;
+}
+
+html, body {
+  width: var(--w);
+  height: var(--h);
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+  width: calc(var(--w) / var(--fit));
+  height: calc(var(--h) / var(--fit));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--speed) ease-in-out;
+  display: flex;
+  padding: calc(var(--safe-margin) / var(--fit));
+  transform: scale(var(--fit));
+  transform-origin: top left;
+}
+.screen.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+#slide-portada {
+  border: 6px solid var(--ink);
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  text-align: left;
+  gap: var(--stack-md);
+}
+.pulse-ring { display: none; }
+#slide-portada .institute {
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+#slide-portada h1 {
+  font-family: 'Space Grotesk', Arial, sans-serif;
+  font-size: 120px;
+  line-height: 110px;
+  letter-spacing: -0.04em;
+  font-weight: 700;
+  text-transform: uppercase;
+  max-width: 1400px;
+}
+#slide-portada h1 span { color: var(--ink); }
+#slide-portada .tagline {
+  font-family: 'Space Grotesk', Arial, sans-serif;
+  font-size: 48px;
+  line-height: 56px;
+  font-weight: 600;
+}
+#slide-portada .subtitle {
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: .02em;
+}
+
+.badge-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--stack-sm);
+  width: 100%;
+  max-width: 1300px;
+}
+.badge {
+  border: 4px solid var(--ink);
+  background: transparent;
+  padding: 16px 20px;
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: .1em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.cicle-layout {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+  gap: var(--gutter);
+}
+
+.cicle-left,
+.cicle-right {
+  border: 6px solid var(--ink);
+}
+
+.cicle-left {
+  display: grid;
+  grid-template-rows: auto auto auto;
+  align-content: start;
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.cicle-html-top,
+.cicle-html-mid,
+.cicle-text-band {
+  padding: var(--module-padding);
+  border-bottom: 4px solid var(--bg);
+}
+.cicle-text-band { border-bottom: none; }
+
+.cicle-html-top,
+.cicle-html-mid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--stack-sm);
+  align-items: stretch;
+}
+
+.cicle-hero-copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--stack-sm);
+}
+.cicle-kicker,
+.cicle-right .type-badge,
+.mc-type {
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.cicle-kicker {
+  border: 4px solid var(--bg);
+  padding: 8px 12px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.cicle-hero-title,
+.cicle-text-band h3 {
+  font-family: 'Space Grotesk', Arial, sans-serif;
+  font-size: 48px;
+  line-height: 56px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.cicle-hero-sub,
+.cicle-text-band .desc,
+.cicle-right .slogan,
+.mini-card .mc-slogan,
+.cicle-points li,
+.cicle-right .info-block,
+.modul-chip,
+.tech-tag {
+  font-family: 'Space Grotesk', Arial, sans-serif;
+  font-size: 32px;
+  line-height: 44px;
+  font-weight: 500;
+  letter-spacing: .01em;
+}
+
+.cicle-hero-visual,
+.cicle-mid-visual {
+  border-left: 4px solid var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.cicle-hero-visual img,
+.cicle-mid-visual img {
+  width: 130%;
+  height: 130%;
+  object-fit: contain;
+  mix-blend-mode: luminosity;
+  opacity: .9;
+}
+
+.cicle-points {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.cicle-points li {
+  border-bottom: 2px solid rgba(252,197,1,.55);
+  padding: 8px 0;
+}
+.cicle-points li::before {
+  content: '> ';
+  font-family: 'Inter', Arial, sans-serif;
+  font-weight: 700;
+  letter-spacing: .1em;
+}
+
+.cicle-text-band {
+  display: flex;
+  flex-direction: column;
+  gap: var(--stack-sm);
+}
+
+.cicle-text-band .moduls,
+.cicle-text-band .tech-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.modul-chip,
+.tech-tag {
+  padding: 8px 0;
+  border-bottom: 2px solid rgba(252,197,1,.55);
+}
+
+.duracio-badge {
+  width: fit-content;
+  padding: 8px 16px;
+  border: 4px solid var(--bg);
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.cicle-right {
+  background: var(--bg);
+  color: var(--ink);
+  padding: var(--module-padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--stack-sm);
+}
+
+.cicle-right .type-badge {
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.cicle-right .slogan,
+.cicle-right .info-block {
+  font-size: 28px;
+  line-height: 38px;
+}
+
+.cicle-right .type-badge {
+  background: var(--ink);
+  color: var(--bg);
+  padding: 12px;
+}
+
+.cicle-right .info-block {
+  border-top: 4px solid var(--ink);
+  padding-top: 12px;
+}
+.cicle-right .info-block strong {
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.cicle-right ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.cicle-right ul li {
+  border-bottom: 2px solid rgba(1,30,74,.35);
+  padding: 8px 0;
+}
+.cicle-right ul li::before {
+  content: '> ';
+  font-family: 'Inter', Arial, sans-serif;
+  font-weight: 700;
+  letter-spacing: .1em;
+}
+
+.qr-block {
+  margin-top: auto;
+  border: 6px solid var(--ink);
+  padding: 10px 10px 8px;
+  background: var(--white);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  width: 100%;
+  max-width: 350px;
+  margin-bottom: 20px;
+}
+.qr-block img {
+  width: 320px;
+  height: 320px;
+  max-width: 100%;
+  background: var(--white);
+  border: 8px solid var(--ink);
+  padding: 6px;
+}
+
+#slide-resum {
+  border: 6px solid var(--ink);
+  flex-direction: column;
+  gap: 20px;
+  padding: 30px 30px 74px;
+  overflow: hidden;
+}
+
+#slide-resum h2 {
+  font-size: 44px;
+  line-height: 50px;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  flex: 1;
+  width: 100%;
+  max-width: 100%;
+  min-height: 0;
+}
+
+.mini-card {
+  border: 4px solid var(--ink);
+  background: var(--bg);
+  padding: 10px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+.mini-card .mc-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: .15;
+  mix-blend-mode: multiply;
+}
+.mini-card .mc-type {
+  background: var(--ink) !important;
+  color: var(--bg) !important;
+  padding: 4px 8px;
+  width: fit-content;
+  z-index: 1;
+  font-size: 13px;
+  line-height: 16px;
+}
+.mini-card h3 {
+  font-family: 'Space Grotesk', Arial, sans-serif;
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 500;
+  z-index: 1;
+  overflow-wrap: anywhere;
+}
+.mini-card .mc-slogan {
+  z-index: 1;
+  font-size: 14px;
+  line-height: 18px;
+  overflow-wrap: anywhere;
+}
+.mini-card .mc-qr {
+  width: min(100%, 360px);
+  aspect-ratio: 1 / 1;
+  height: auto;
+  border: 4px solid var(--ink);
+  background: var(--white);
+  padding: 6px;
+  z-index: 1;
+}
+
+@media (max-width: 1680px) {
+  .cards-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: auto;
+  }
+}
+
+@media (max-width: 1280px) {
+  #slide-resum {
+    padding: 20px 20px 64px;
+  }
+
+  .cards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+#progress-bar,
+#slide-counter {
+  display: none;
+}
+
+.carousel-indicators {
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 100;
+}
+
+.carousel-indicator {
+  width: 56px;
+  height: 18px;
+  border: 4px solid var(--ink);
+  background: transparent;
+}
+
+.carousel-indicator.active {
+  background: var(--ink);
+}
+
+/* Variaciones de layout entre ciclos */
+#slide-smx .cicle-layout { grid-template-columns: 7fr 5fr; }
+#slide-smx .cicle-left {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#slide-smx .cicle-left::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url('imgs/smx_illustracio.png') center center / cover no-repeat;
+  opacity: .18;
+  mix-blend-mode: luminosity;
+  z-index: 0;
+}
+
+#slide-smx .cicle-left > * {
+  position: relative;
+  z-index: 1;
+}
+
+#slide-smx .cicle-html-top,
+#slide-smx .cicle-html-mid {
+  grid-template-columns: 1fr;
+  position: relative;
+  overflow: hidden;
+}
+
+#slide-smx .cicle-html-top,
+#slide-smx .cicle-html-mid,
+#slide-smx .cicle-text-band {
+  padding: 20px;
+}
+
+/* La imagen pasa a capa de fondo y no consume espacio */
+#slide-smx .cicle-hero-visual,
+#slide-smx .cicle-mid-visual {
+  display: none;
+}
+
+#slide-smx .cicle-hero-copy,
+#slide-smx .cicle-points {
+  position: relative;
+  z-index: 1;
+  gap: 8px;
+}
+
+/* Compactación tipográfica del panel izquierdo */
+#slide-smx .cicle-hero-title,
+#slide-smx .cicle-text-band h3 {
+  font-size: 40px;
+  line-height: 44px;
+}
+
+#slide-smx .cicle-hero-sub,
+#slide-smx .cicle-points li,
+#slide-smx .cicle-text-band .desc,
+#slide-smx .modul-chip,
+#slide-smx .tech-tag {
+  font-size: 22px;
+  line-height: 30px;
+}
+
+#slide-smx .cicle-points li,
+#slide-smx .modul-chip,
+#slide-smx .tech-tag {
+  padding: 6px 0;
+}
+
+#slide-smx .cicle-kicker,
+#slide-smx .duracio-badge {
+  font-size: 16px;
+  line-height: 22px;
+  padding: 4px 10px;
+}
+
+/* Redistribución inferior en columnas */
+#slide-smx .cicle-text-band {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas:
+    "title title"
+    "desc desc"
+    "mods tech"
+    "dur dur";
+  gap: 8px 10px;
+  min-height: 0;
+}
+
+#slide-smx .cicle-text-band .moduls,
+#slide-smx .cicle-text-band .tech-row {
+  gap: 8px;
+}
+
+#slide-smx .cicle-text-band h3 { grid-area: title; }
+#slide-smx .cicle-text-band .desc { grid-area: desc; }
+#slide-smx .cicle-text-band .moduls {
+  grid-area: mods;
+  grid-template-columns: 1fr;
+}
+#slide-smx .cicle-text-band .tech-row {
+  grid-area: tech;
+  grid-template-columns: 1fr;
+}
+#slide-smx .cicle-text-band .duracio-badge {
+  grid-area: dur;
+}
+
+#slide-smx .cicle-right {
+  min-height: 0;
+}
+
+/* Imágenes de secciones en fondo (mismo patrón que SMX) */
+#slide-asix .cicle-left,
+#slide-dam .cicle-left,
+#slide-daw .cicle-left,
+#slide-iabd .cicle-left,
+#slide-aa .cicle-left,
+#slide-nuvol .cicle-left {
+  position: relative;
+  overflow: hidden;
+}
+
+#slide-asix .cicle-left::before,
+#slide-dam .cicle-left::before,
+#slide-daw .cicle-left::before,
+#slide-iabd .cicle-left::before,
+#slide-aa .cicle-left::before,
+#slide-nuvol .cicle-left::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--left-bg-image);
+  background-position: var(--left-bg-position, center center);
+  background-size: var(--left-bg-size, cover);
+  background-repeat: no-repeat;
+  opacity: .18;
+  mix-blend-mode: luminosity;
+  z-index: 0;
+}
+
+#slide-asix .cicle-left > *,
+#slide-dam .cicle-left > *,
+#slide-daw .cicle-left > *,
+#slide-iabd .cicle-left > *,
+#slide-aa .cicle-left > *,
+#slide-nuvol .cicle-left > * {
+  position: relative;
+  z-index: 1;
+}
+
+#slide-asix .cicle-hero-visual,
+#slide-asix .cicle-mid-visual,
+#slide-dam .cicle-hero-visual,
+#slide-dam .cicle-mid-visual,
+#slide-daw .cicle-hero-visual,
+#slide-daw .cicle-mid-visual,
+#slide-iabd .cicle-hero-visual,
+#slide-iabd .cicle-mid-visual,
+#slide-aa .cicle-hero-visual,
+#slide-aa .cicle-mid-visual,
+#slide-nuvol .cicle-hero-visual,
+#slide-nuvol .cicle-mid-visual {
+  display: none;
+}
+
+#slide-asix .cicle-left {
+  --left-bg-image: url('imgs/asix_tecnologies.png');
+}
+
+#slide-dam .cicle-left {
+  --left-bg-image: url('imgs/dam_ilustracio.png');
+}
+
+#slide-daw .cicle-left {
+  --left-bg-image: url('imgs/daw_illustracio.png');
+}
+
+#slide-iabd .cicle-left {
+  --left-bg-image: url('imgs/curs_especialitzacio_ia_bd_illustracio.png'), url('imgs/curs_especialitzacio_ia_bd_tecnologies.png');
+  --left-bg-position: center center, right bottom;
+  --left-bg-size: cover, 48%;
+}
+
+#slide-aa .cicle-left {
+  --left-bg-image: url('imgs/curs_especialitzacio_aprenentatge_automatic_ilustracio.png');
+}
+
+#slide-nuvol .cicle-left {
+  --left-bg-image: url('imgs/curs_especialitzacio_nubol_ilustracio.png'), url('imgs/curs_especialitzacio_nubol_tecnologies.png');
+  --left-bg-position: center center, right bottom;
+  --left-bg-size: cover, 48%;
+}
+
+/* Aplicar compactación y aumento tipográfico del panel izquierdo al resto de ciclos */
+#slide-asix .cicle-html-top,
+#slide-asix .cicle-html-mid,
+#slide-asix .cicle-text-band,
+#slide-dam .cicle-html-top,
+#slide-dam .cicle-html-mid,
+#slide-dam .cicle-text-band,
+#slide-daw .cicle-html-top,
+#slide-daw .cicle-html-mid,
+#slide-daw .cicle-text-band,
+#slide-iabd .cicle-html-top,
+#slide-iabd .cicle-html-mid,
+#slide-iabd .cicle-text-band,
+#slide-aa .cicle-html-top,
+#slide-aa .cicle-html-mid,
+#slide-aa .cicle-text-band,
+#slide-nuvol .cicle-html-top,
+#slide-nuvol .cicle-html-mid,
+#slide-nuvol .cicle-text-band {
+  padding: 20px;
+}
+
+#slide-asix .cicle-hero-title,
+#slide-asix .cicle-text-band h3,
+#slide-dam .cicle-hero-title,
+#slide-dam .cicle-text-band h3,
+#slide-daw .cicle-hero-title,
+#slide-daw .cicle-text-band h3,
+#slide-iabd .cicle-hero-title,
+#slide-iabd .cicle-text-band h3,
+#slide-aa .cicle-hero-title,
+#slide-aa .cicle-text-band h3,
+#slide-nuvol .cicle-hero-title,
+#slide-nuvol .cicle-text-band h3 {
+  font-size: 40px;
+  line-height: 44px;
+}
+
+#slide-asix .cicle-hero-sub,
+#slide-asix .cicle-points li,
+#slide-asix .cicle-text-band .desc,
+#slide-asix .modul-chip,
+#slide-asix .tech-tag,
+#slide-dam .cicle-hero-sub,
+#slide-dam .cicle-points li,
+#slide-dam .cicle-text-band .desc,
+#slide-dam .modul-chip,
+#slide-dam .tech-tag,
+#slide-daw .cicle-hero-sub,
+#slide-daw .cicle-points li,
+#slide-daw .cicle-text-band .desc,
+#slide-daw .modul-chip,
+#slide-daw .tech-tag,
+#slide-iabd .cicle-hero-sub,
+#slide-iabd .cicle-points li,
+#slide-iabd .cicle-text-band .desc,
+#slide-iabd .modul-chip,
+#slide-iabd .tech-tag,
+#slide-aa .cicle-hero-sub,
+#slide-aa .cicle-points li,
+#slide-aa .cicle-text-band .desc,
+#slide-aa .modul-chip,
+#slide-aa .tech-tag,
+#slide-nuvol .cicle-hero-sub,
+#slide-nuvol .cicle-points li,
+#slide-nuvol .cicle-text-band .desc,
+#slide-nuvol .modul-chip,
+#slide-nuvol .tech-tag {
+  font-size: 22px;
+  line-height: 30px;
+}
+
+#slide-asix .cicle-kicker,
+#slide-asix .duracio-badge,
+#slide-dam .cicle-kicker,
+#slide-dam .duracio-badge,
+#slide-daw .cicle-kicker,
+#slide-daw .duracio-badge,
+#slide-iabd .cicle-kicker,
+#slide-iabd .duracio-badge,
+#slide-aa .cicle-kicker,
+#slide-aa .duracio-badge,
+#slide-nuvol .cicle-kicker,
+#slide-nuvol .duracio-badge {
+  font-size: 16px;
+  line-height: 22px;
+}
+
+#slide-asix .cicle-text-band,
+#slide-dam .cicle-text-band,
+#slide-daw .cicle-text-band,
+#slide-iabd .cicle-text-band,
+#slide-aa .cicle-text-band,
+#slide-nuvol .cicle-text-band {
+  gap: 6px 10px;
+}
+
+/* Segunda pasada de equilibrio visual por densidad de contenido */
+#slide-asix .cicle-hero-title,
+#slide-asix .cicle-text-band h3,
+#slide-aa .cicle-hero-title,
+#slide-aa .cicle-text-band h3,
+#slide-nuvol .cicle-hero-title,
+#slide-nuvol .cicle-text-band h3 {
+  font-size: 36px;
+  line-height: 40px;
+}
+
+#slide-asix .cicle-points li,
+#slide-daw .cicle-points li,
+#slide-iabd .cicle-points li,
+#slide-aa .cicle-points li,
+#slide-nuvol .cicle-points li {
+  padding: 6px 0;
+}
+
+#slide-asix .modul-chip,
+#slide-asix .tech-tag,
+#slide-daw .modul-chip,
+#slide-daw .tech-tag,
+#slide-iabd .modul-chip,
+#slide-iabd .tech-tag,
+#slide-aa .modul-chip,
+#slide-aa .tech-tag,
+#slide-nuvol .modul-chip,
+#slide-nuvol .tech-tag {
+  font-size: 20px;
+  line-height: 26px;
+  padding: 6px 0;
+}
+
+#slide-asix .cicle-text-band .moduls,
+#slide-daw .cicle-text-band .moduls,
+#slide-iabd .cicle-text-band .moduls,
+#slide-aa .cicle-text-band .moduls,
+#slide-nuvol .cicle-text-band .moduls,
+#slide-asix .cicle-text-band .tech-row,
+#slide-daw .cicle-text-band .tech-row,
+#slide-iabd .cicle-text-band .tech-row,
+#slide-aa .cicle-text-band .tech-row,
+#slide-nuvol .cicle-text-band .tech-row {
+  gap: 6px;
+}
+
+#slide-asix .cicle-layout { grid-template-columns: 8fr 4fr; }
+#slide-asix .cicle-html-top, #slide-asix .cicle-html-mid { grid-template-columns: 42% 58%; }
+#slide-dam .cicle-layout { grid-template-columns: 9fr 3fr; }
+#slide-dam .cicle-html-mid { grid-template-columns: 1fr; }
+#slide-daw .cicle-layout { grid-template-columns: 9fr 3fr; }
+#slide-daw .cicle-html-top { grid-template-columns: 1fr; }
+#slide-daw .cicle-hero-visual { border-left: 0; border-top: 4px solid var(--bg); }
+#slide-iabd .cicle-layout { grid-template-columns: 4fr 8fr; }
+#slide-iabd .cicle-right { order: 1; }
+#slide-iabd .cicle-left { order: 2; }
+#slide-aa .cicle-layout { grid-template-columns: 8fr 4fr; }
+#slide-aa .cicle-html-mid { grid-template-columns: 1fr; }
+#slide-nuvol .cicle-layout { grid-template-columns: 9fr 3fr; }
+
+/* Més marge i menys altura útil en slides amb QR per no tocar indicadors */
+#slide-smx .cicle-layout,
+#slide-asix .cicle-layout,
+#slide-dam .cicle-layout,
+#slide-daw .cicle-layout,
+#slide-iabd .cicle-layout,
+#slide-aa .cicle-layout,
+#slide-nuvol .cicle-layout {
+  height: calc(100% - 46px);
+}
+
+/* Un poco más de aire inferior en los bloques de contenido izquierdos */
+#slide-smx .cicle-html-top,
+#slide-smx .cicle-html-mid,
+#slide-smx .cicle-text-band {
+  padding-bottom: 12px;
+}
+
+#slide-asix .cicle-html-top,
+#slide-asix .cicle-html-mid,
+#slide-asix .cicle-text-band,
+#slide-dam .cicle-html-top,
+#slide-dam .cicle-html-mid,
+#slide-dam .cicle-text-band,
+#slide-daw .cicle-html-top,
+#slide-daw .cicle-html-mid,
+#slide-daw .cicle-text-band,
+#slide-iabd .cicle-html-top,
+#slide-iabd .cicle-html-mid,
+#slide-iabd .cicle-text-band,
+#slide-aa .cicle-html-top,
+#slide-aa .cicle-html-mid,
+#slide-aa .cicle-text-band,
+#slide-nuvol .cicle-html-top,
+#slide-nuvol .cicle-html-mid,
+#slide-nuvol .cicle-text-band {
+  padding-bottom: 44px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .screen { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ====== SLIDE 0: PORTADA ===================================== -->
+<section class="screen active" id="slide-portada" aria-label="Portada Família Informàtica">
+  <div class="pulse-ring" style="width:300px;height:300px;top:390px;left:760px;animation-delay:0s"></div>
+  <div class="pulse-ring" style="width:200px;height:200px;top:440px;left:860px;animation-delay:1s"></div>
+  <p class="institute">IES Dr. Lluís Simarro · Xàtiva</p>
+  <h1><span>Família</span> d'Informàtica<br>i Comunicacions</h1>
+  <p class="tagline">Formació Professional</p>
+  <div class="badge-row">
+    <div class="badge" style="border-color:var(--green);color:var(--green)">FP Bàsica</div>
+    <div class="badge" style="border-color:var(--gold);color:var(--gold)">Grau Mitjà</div>
+    <div class="badge" style="border-color:var(--cyan);color:var(--cyan)">Grau Superior ×3</div>
+    <div class="badge" style="border-color:var(--purple);color:var(--purple)">Especialització ×3</div>
+    <div class="badge">FP Dual</div>
+    <div class="badge">FCT Erasmus+</div>
+  </div>
+  <p class="subtitle">portal.edu.gva.es/ieslluissimarro · Tel. 962 249 080</p>
+</section>
+
+<!-- ====== SLIDE 1: SMX ========================================= -->
+<section class="screen" id="slide-smx" aria-label="SMX – Sistemes Microinformàtics i Xarxes">
+  <div class="cicle-layout">
+    <div class="cicle-left">
+      <header class="cicle-html-top">
+        <article class="cicle-hero-copy">
+          <span class="cicle-kicker">Cicle Formatiu de Grau Mitjà</span>
+          <h3 class="cicle-hero-title">SMX · Sistemes Microinformàtics i Xarxes</h3>
+          <p class="cicle-hero-sub">Muntatge, manteniment, xarxes i serveis: forma't per gestionar tecnologia real des del primer curs.</p>
+        </article>
+        <figure class="cicle-hero-visual">
+          <img src="imgs/smx_illustracio.png" alt="Il·lustració de sistemes i xarxes per al cicle SMX">
+        </figure>
+      </header>
+      <section class="cicle-html-mid" aria-label="Continguts clau de SMX">
+        <ul class="cicle-points">
+          <li>Instal·lació i manteniment d'equips informàtics.</li>
+          <li>Configuració de xarxes i connectivitat local.</li>
+          <li>Serveis en xarxa, seguretat i còpies de seguretat.</li>
+          <li>Suport tècnic i assistència professional.</li>
+        </ul>
+       
+      </section>
+      <div class="cicle-text-band">
+        <h3>Construeix, configura i connecta el món digital</h3>
+        <p class="desc">
+          El tècnic en SMX instal·la, configura i manté equips informàtics, xarxes
+          locals i serveis. Aprén fent, amb tecnologia real i eixides professionals immediates.
+        </p>
+        <div class="moduls">
+          <span class="modul-chip">Muntatge i manteniment d'equips</span>
+          <span class="modul-chip">Sistemes operatius monolloc</span>
+          <span class="modul-chip">Aplicacions ofimàtiques</span>
+          <span class="modul-chip">Xarxes locals</span>
+          <span class="modul-chip">Sistemes operatius en xarxa</span>
+          <span class="modul-chip">Seguretat informàtica</span>
+          <span class="modul-chip">Servicis en xarxa</span>
+          <span class="modul-chip">Aplicacions web</span>
+        </div>
+        
+        <span class="duracio-badge">2.000 hores · Grau Mitjà</span>
+      </div>
+    </div>
+    <div class="cicle-right">
+      <div class="type-badge gm-badge">Grau Mitjà</div>
+      <p class="slogan">El teu futur està connectat!</p>
+      <div class="info-block">
+        <strong>Eixides professionals</strong>
+        <ul>
+          <li>Tècnic/a en muntatge i manteniment</li>
+          <li>Suport i assistència informàtica</li>
+          <li>Instal·lador/a de xarxes i sistemes</li>
+          <li>Tècnic/a en serveis d'internet</li>
+          <li>Tècnic/a en administració de sistemes</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <strong>Accés</strong>
+        <ul>
+          <li>ESO o equivalent</li>
+          <li>Prova d'accés de Grau Mitjà</li>
+        </ul>
+      </div>
+      <div class="qr-block">
+        <img src="imgs/qr_smx.png" alt="QR informació SMX">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 2: ASIX ======================================== -->
+<section class="screen" id="slide-asix" aria-label="ASIX – Administració de Sistemes Informàtics en Xarxa">
+  <div class="cicle-layout">
+    <div class="cicle-left">
+      <header class="cicle-html-top">
+        <article class="cicle-hero-copy">
+          <span class="cicle-kicker">Cicle Formatiu de Grau Superior</span>
+          <h3 class="cicle-hero-title">ASIX · Administració de Sistemes en Xarxa</h3>
+          <p class="cicle-hero-sub">Administra servidors, desplega serveis i protegeix infraestructures professionals en entorns de xarxa.</p>
+        </article>
+        <figure class="cicle-hero-visual">
+          <img src="imgs/asix_tecnologies.png" alt="Tecnologies i entorns del cicle ASIX">
+        </figure>
+      </header>
+      <section class="cicle-html-mid" aria-label="Continguts clau d'ASIX">
+        <ul class="cicle-points">
+          <li>Sistemes operatius en xarxa i virtualització.</li>
+          <li>Administració de servidors i serveis d'internet.</li>
+          <li>Configuració de routers, switches i xarxes corporatives.</li>
+          <li>Monitoratge, seguretat i continuïtat de servei.</li>
+        </ul>
+        <figure class="cicle-mid-visual">
+          <img src="imgs/asix_tecnologies.png" alt="Icona de tecnologies d'ASIX">
+        </figure>
+      </section>
+      <div class="cicle-text-band">
+        <h3>Administra, connecta i protegeix els sistemes del futur</h3>
+        <p class="desc">
+          Gestiona servidors, xarxes d'empresa i serveis d'internet. Configura routers,
+          switches i implementa seguretat i monitoratge en entorns reals.
+        </p>
+        <div class="moduls">
+          <span class="modul-chip">Implantació de sistemes operatius</span>
+          <span class="modul-chip">Planificació i administració de xarxes</span>
+          <span class="modul-chip">Fonaments de maquinari</span>
+          <span class="modul-chip">Gestió de bases de dades</span>
+          <span class="modul-chip">Llenguatges de marques i sistemes de gestió d'informació</span>
+          <span class="modul-chip">Administració de sistemes operatius</span>
+          <span class="modul-chip">Servicis de xarxa i Internet</span>
+          <span class="modul-chip">Implantació d'aplicacions web</span>
+          <span class="modul-chip">Administració de sistemes gestors de bases de dades</span>
+          <span class="modul-chip">Seguretat i alta disponibilitat</span>
+        </div>
+        
+        <span class="duracio-badge">2.000 hores · Grau Superior</span>
+      </div>
+    </div>
+    <div class="cicle-right">
+      <div class="type-badge gs-badge">Grau Superior</div>
+      <p class="slogan">El teu futur és a les xarxes</p>
+      <div class="info-block">
+        <strong>Eixides professionals</strong>
+        <ul>
+          <li>Administrador/a de sistemes</li>
+          <li>Gestor/a de xarxes d'empresa</li>
+          <li>Tècnic/a de seguretat</li>
+          <li>Administrador/a de servidors</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <strong>Accés</strong>
+        <ul>
+          <li>Batxillerat o equivalent</li>
+          <li>Tècnic Superior o equivalent</li>
+          <li>Prova d'accés de Grau Superior</li>
+        </ul>
+      </div>
+      <div class="qr-block">
+        <img src="imgs/qr_asix.png" alt="QR informació ASIX">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 3: DAM ========================================= -->
+<section class="screen" id="slide-dam" aria-label="DAM – Desenvolupament d'Aplicacions Multiplataforma">
+  <div class="cicle-layout">
+    <div class="cicle-left">
+      <header class="cicle-html-top">
+        <article class="cicle-hero-copy">
+          <span class="cicle-kicker">Cicle Formatiu de Grau Superior</span>
+          <h3 class="cicle-hero-title">DAM · Aplicacions Multiplataforma</h3>
+          <p class="cicle-hero-sub">Desenvolupa programari per a dispositius mòbils, escriptori i serveis integrats amb bases de dades.</p>
+        </article>
+        <figure class="cicle-hero-visual">
+          <img src="imgs/dam_ilustracio.png" alt="Il·lustració de desenvolupament DAM">
+        </figure>
+      </header>
+      <section class="cicle-html-mid" aria-label="Continguts clau de DAM">
+        <ul class="cicle-points">
+          <li>Programació orientada a objectes i arquitectura d'apps.</li>
+          <li>Interfícies d'usuari multiplataforma i UX.</li>
+          <li>Persistència amb MySQL, SQLite i integració de serveis.</li>
+          <li>Publicació i desplegament d'aplicacions reals.</li>
+        </ul>
+        <figure class="cicle-mid-visual">
+          <img src="imgs/dam_ilustracio.png" alt="Icona DAM">
+        </figure>
+      </section>
+      <div class="cicle-text-band">
+        <h3>Desenvolupa aplicacions per a mòbils, escriptori i web</h3>
+        <p class="desc">
+          Programa interfícies gràfiques i aplicacions multiplataforma. Accedeix a
+          bases de dades, integra serveis i publica apps a botigues reals.
+        </p>
+        <div class="moduls">
+          <span class="modul-chip">Llenguatges de marques i sistemes de gestió d'informació</span>
+          <span class="modul-chip">Sistemes informàtics</span>
+          <span class="modul-chip">Bases de dades</span>
+          <span class="modul-chip">Programació</span>
+          <span class="modul-chip">Entorns de desenrotllament</span>
+          <span class="modul-chip">Accés a dades</span>
+          <span class="modul-chip">Desenrotllament d'interfícies</span>
+          <span class="modul-chip">Programació multimèdia i dispositius mòbils</span>
+          <span class="modul-chip">Programació de servicis i processos</span>
+          <span class="modul-chip">Sistemes de gestió empresarial</span>
+        </div>
+        
+        <span class="duracio-badge">2.000 hores · Grau Superior</span>
+      </div>
+    </div>
+    <div class="cicle-right">
+      <div class="type-badge gs-badge">Grau Superior</div>
+      <p class="slogan">El teu futur, en multiplataforma</p>
+      <div class="info-block">
+        <strong>Eixides professionals</strong>
+        <ul>
+          <li>Desenvolupador/a d'apps Android &amp; iOS</li>
+          <li>Programador/a d'escriptori</li>
+          <li>Tècnic/a en bases de dades</li>
+          <li>Integrador/a de sistemes</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <strong>Accés</strong>
+        <ul>
+          <li>Batxillerat o equivalent</li>
+          <li>Tècnic Superior o equivalent</li>
+        </ul>
+      </div>
+      <div class="qr-block">
+        <img src="imgs/qr_dam.png" alt="QR informació DAM">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 4: DAW ========================================= -->
+<section class="screen" id="slide-daw" aria-label="DAW – Desenvolupament d'Aplicacions Web">
+  <div class="cicle-layout">
+    <div class="cicle-left">
+      <header class="cicle-html-top">
+        <article class="cicle-hero-copy">
+          <span class="cicle-kicker">Cicle Formatiu de Grau Superior</span>
+          <h3 class="cicle-hero-title">DAW · Aplicacions Web</h3>
+          <p class="cicle-hero-sub">Dissenya i construeix webs modernes amb frontend, backend, seguretat i desplegament professional.</p>
+        </article>
+        <figure class="cicle-hero-visual">
+          <img src="imgs/daw_illustracio.png" alt="Il·lustració de desenvolupament web DAW">
+        </figure>
+      </header>
+      <section class="cicle-html-mid" aria-label="Continguts clau de DAW">
+        <ul class="cicle-points">
+          <li>Frontend amb HTML5, CSS3, JavaScript i bones pràctiques.</li>
+          <li>Backend, lògica de negoci i APIs REST.</li>
+          <li>Bases de dades, formularis i validació segura.</li>
+          <li>Control de versions, test i desplegament en servidor.</li>
+        </ul>
+        <figure class="cicle-mid-visual">
+          <img src="imgs/daw_illustracio.png" alt="Icona DAW">
+        </figure>
+      </section>
+      <div class="cicle-text-band">
+        <h3>Dissenya, programa i publica aplicacions per a Internet</h3>
+        <p class="desc">
+          Desenvolupa el frontend i el backend de webs modernes. HTML, CSS, JavaScript,
+          PHP, bases de dades, APIs REST i desplegament en servidors professionals.
+        </p>
+        <div class="moduls">
+          <span class="modul-chip">Llenguatges de marques i sistemes de gestió d'informació</span>
+          <span class="modul-chip">Sistemes informàtics</span>
+          <span class="modul-chip">Bases de dades</span>
+          <span class="modul-chip">Programació</span>
+          <span class="modul-chip">Entorns de desenrotllament</span>
+          <span class="modul-chip">Desenrotllament web en entorn client</span>
+          <span class="modul-chip">Desenrotllament web en entorn servidor</span>
+          <span class="modul-chip">Desplegament d'aplicacions web</span>
+          <span class="modul-chip">Disseny d'interfícies web</span>
+        </div>
+        
+        <span class="duracio-badge">2.000 hores · Grau Superior</span>
+      </div>
+    </div>
+    <div class="cicle-right">
+      <div class="type-badge gs-badge">Grau Superior</div>
+      <p class="slogan">El teu futur és a la web</p>
+      <div class="info-block">
+        <strong>Eixides professionals</strong>
+        <ul>
+          <li>Desenvolupador/a web full-stack</li>
+          <li>Maquetador/a frontend</li>
+          <li>Programador/a backend</li>
+          <li>Dissenyador/a d'interfícies</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <strong>Accés</strong>
+        <ul>
+          <li>Batxillerat o equivalent</li>
+          <li>Tècnic Superior o equivalent</li>
+        </ul>
+      </div>
+      <div class="qr-block">
+        <img src="imgs/qr_daw.png" alt="QR informació DAW">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 5: CE IA i Big Data ============================ -->
+<section class="screen" id="slide-iabd" aria-label="CE Intel·ligència Artificial i Big Data">
+  <div class="cicle-layout">
+    <div class="cicle-left">
+      <header class="cicle-html-top">
+        <article class="cicle-hero-copy">
+          <span class="cicle-kicker">Curs d'Especialització</span>
+          <h3 class="cicle-hero-title">IA i Big Data</h3>
+          <p class="cicle-hero-sub">Aprén les tecnologies més avançades per convertir grans volums de dades en decisions intel·ligents.</p>
+        </article>
+        <figure class="cicle-hero-visual">
+          <img src="imgs/curs_especialitzacio_ia_bd_illustracio.png" alt="Il·lustració del curs d'especialització IA i Big Data">
+        </figure>
+      </header>
+      <section class="cicle-html-mid" aria-label="Continguts clau d'IA i Big Data">
+        <ul class="cicle-points">
+          <li>Gestió i processament de grans volums de dades.</li>
+          <li>Entrenament i optimització de models predictius.</li>
+          <li>Entorns distribuïts i ecosistemes Big Data.</li>
+          <li>Aplicació d'IA en projectes reals d'empresa.</li>
+        </ul>
+        <figure class="cicle-mid-visual">
+          <img src="imgs/curs_especialitzacio_ia_bd_tecnologies.png" alt="Tecnologies del curs IA i Big Data">
+        </figure>
+      </section>
+      <div class="cicle-text-band">
+        <h3>Transforma dades en intel·ligència</h3>
+        <p class="desc">
+          Gestiona i analitza grans volums de dades. Aplica tècniques d'intel·ligència
+          artificial i aprenentatge automàtic. Entrena models predictius i desplega-los
+          en entorns distribuïts.
+        </p>
+        <div class="moduls">
+          <span class="modul-chip">Models d'IA</span>
+          <span class="modul-chip">Aprenentatge automàtic</span>
+          <span class="modul-chip">Programació d'IA</span>
+          <span class="modul-chip">Sistemes Big Data</span>
+          <span class="modul-chip">Big Data aplicat</span>
+        </div>
+        <div class="tech-row">
+          <span class="tech-tag">Python</span>
+          <span class="tech-tag">TensorFlow</span>
+          <span class="tech-tag">Hadoop</span>
+          <span class="tech-tag">Pandas</span>
+          <span class="tech-tag">Scikit-learn</span>
+        </div>
+        <span class="duracio-badge">600 hores · Curs d'Especialització</span>
+      </div>
+    </div>
+    <div class="cicle-right">
+      <div class="type-badge ce-badge">Curs d'Especialització</div>
+      <p class="slogan">El teu futur és en la IA!</p>
+      <div class="info-block">
+        <strong>Eixides professionals</strong>
+        <ul>
+          <li>Científic/a de dades (Data Scientist)</li>
+          <li>Enginyer/a de Big Data</li>
+          <li>Especialista en IA</li>
+          <li>Analista de dades</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <strong>Requisits d'accés</strong>
+        <ul>
+          <li>Tècnic/a Superior en ASIX</li>
+          <li>Tècnic/a Superior en DAM o DAW</li>
+        </ul>
+      </div>
+      <div class="qr-block">
+        <img src="imgs/qr_iabd.png" alt="QR informació IA i Big Data">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 6: CE Aprenentatge Automàtic =================== -->
+<section class="screen" id="slide-aa" aria-label="CE Aprenentatge Automàtic: Gestió de Dades i Entrenament">
+  <div class="cicle-layout">
+    <div class="cicle-left">
+      <header class="cicle-html-top">
+        <article class="cicle-hero-copy">
+          <span class="cicle-kicker">Curs d'Especialització</span>
+          <h3 class="cicle-hero-title">Aprenentatge Automàtic</h3>
+          <p class="cicle-hero-sub">De la neteja i depuració de dades fins a l'entrenament de models de Machine Learning aplicats.</p>
+        </article>
+        <figure class="cicle-hero-visual">
+          <img src="imgs/curs_especialitzacio_aprenentatge_automatic_ilustracio.png" alt="Il·lustració del curs d'aprenentatge automàtic">
+        </figure>
+      </header>
+      <section class="cicle-html-mid" aria-label="Continguts clau d'Aprenentatge Automàtic">
+        <ul class="cicle-points">
+          <li>Extracció, tractament i qualitat de dades.</li>
+          <li>Entrenament de models de Machine Learning.</li>
+          <li>Classificació, predicció i anàlisi intel·ligent.</li>
+          <li>Control de biaixos i avaluació de resultats.</li>
+        </ul>
+        <figure class="cicle-mid-visual">
+          <img src="imgs/curs_especialitzacio_aprenentatge_automatic_ilustracio.png" alt="Icona d'aprenentatge automàtic">
+        </figure>
+      </section>
+      <div class="cicle-text-band">
+        <h3>De les dades brutes als models intel·ligents</h3>
+        <p class="desc">
+          Extreu, neteja i entrena models de Machine Learning. Controla biaixos,
+          classifica dades i avalua models predictius en projectes reals d'indústria.
+        </p>
+        <div class="moduls">
+          <span class="modul-chip">IA i Machine Learning</span>
+          <span class="modul-chip">Extracció i transformació</span>
+          <span class="modul-chip">Depuració de dades</span>
+          <span class="modul-chip">Disseny de models</span>
+          <span class="modul-chip">Desplegament de components</span>
+        </div>
+        <div class="tech-row">
+          <span class="tech-tag">Python</span>
+          <span class="tech-tag">Pandas</span>
+          <span class="tech-tag">Scikit-learn</span>
+          <span class="tech-tag">TensorFlow</span>
+          <span class="tech-tag">BigData</span>
+        </div>
+        <span class="duracio-badge">720–800 hores · Curs d'Especialització</span>
+      </div>
+    </div>
+    <div class="cicle-right">
+      <div class="type-badge ce-badge">Curs d'Especialització</div>
+      <p class="slogan">El teu futur està en la IA</p>
+      <div class="info-block">
+        <strong>Aprèn a</strong>
+        <ul>
+          <li>Extraure i tractar dades massives</li>
+          <li>Entrenar models de ML</li>
+          <li>Predir, classificar i analitzar</li>
+          <li>Controlar biaixos i qualitat</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <strong>Requisits d'accés</strong>
+        <ul>
+          <li>Tècnic/a Superior en ASIX, DAM o DAW</li>
+        </ul>
+      </div>
+      <div class="qr-block">
+        <img src="imgs/qr_aa.png" alt="QR informació Aprenentatge Automàtic">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 7: CE Recursos i Servicis en el Núvol ========== -->
+<section class="screen" id="slide-nuvol" aria-label="CE Recursos i Servicis en el Núvol">
+  <div class="cicle-layout">
+    <div class="cicle-left">
+      <header class="cicle-html-top">
+        <article class="cicle-hero-copy">
+          <span class="cicle-kicker">Curs d'Especialització</span>
+          <h3 class="cicle-hero-title">Recursos i Servicis en el Núvol</h3>
+          <p class="cicle-hero-sub">Desplega i opera infraestructures cloud segures amb automatització, contenidors i cultura DevOps.</p>
+        </article>
+        <figure class="cicle-hero-visual">
+          <img src="imgs/curs_especialitzacio_nubol_ilustracio.png" alt="Il·lustració del curs de recursos i servicis en el núvol">
+        </figure>
+      </header>
+      <section class="cicle-html-mid" aria-label="Continguts clau del curs de núvol">
+        <ul class="cicle-points">
+          <li>Gestió de recursos i serveis en plataformes cloud.</li>
+          <li>Identitat, governança i seguretat al núvol.</li>
+          <li>Automatització, migració i desplegament d'aplicacions.</li>
+          <li>Sistemes, xarxes i bases de dades cloud.</li>
+        </ul>
+        <figure class="cicle-mid-visual">
+          <img src="imgs/curs_especialitzacio_nubol_tecnologies.png" alt="Tecnologies del curs de núvol">
+        </figure>
+      </section>
+      <div class="cicle-text-band">
+        <h3>Desplega, gestiona i assegura infraestructures en el núvol</h3>
+        <p class="desc">
+          Administra recursos cloud, gestiona la seguretat i la identitat, desplega
+          aplicacions i automatitza infraestructures amb eines professionals del sector.
+        </p>
+        <div class="moduls">
+          <span class="modul-chip">Seguretat i identitat</span>
+          <span class="modul-chip">Sistemes i xarxes cloud</span>
+          <span class="modul-chip">Bases de dades al núvol</span>
+          <span class="modul-chip">Automatització i desplegament</span>
+          <span class="modul-chip">Migració</span>
+        </div>
+        <div class="tech-row">
+          <span class="tech-tag">AWS</span>
+          <span class="tech-tag">Docker</span>
+          <span class="tech-tag">Kubernetes</span>
+          <span class="tech-tag">DevOps</span>
+          <span class="tech-tag">IaC</span>
+        </div>
+        <span class="duracio-badge">720 hores · Curs d'Especialització</span>
+      </div>
+    </div>
+    <div class="cicle-right">
+      <div class="type-badge ce-badge">Curs d'Especialització</div>
+      <p class="slogan">El teu futur està en el Cloud!</p>
+      <div class="info-block">
+        <strong>Eixides professionals</strong>
+        <ul>
+          <li>Administrador/a cloud</li>
+          <li>Administrador/a de sistemes al núvol</li>
+          <li>Administrador/a de BD cloud</li>
+          <li>Administrador/a d'operacions</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <strong>Requisits d'accés</strong>
+        <ul>
+          <li>Tècnic/a Superior en ASIX, DAM o DAW</li>
+        </ul>
+      </div>
+      <div class="qr-block">
+        <img src="imgs/qr_nuvol.png" alt="QR informació Recursos en el Núvol">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 8: RESUM TOTS ELS CICLES ======================= -->
+<section class="screen" id="slide-resum" aria-label="Resum de tots els cicles">
+  <h2>Tots els cicles · IES Dr. Lluís Simarro · Xàtiva</h2>
+  <div class="cards-grid">
+
+    <article class="mini-card" style="border-color:var(--red)">
+      <img class="mc-img" src="imgs/smx_illustracio.png" alt="">
+      <span class="mc-type" style="background:var(--red);color:#fff">FP Bàsica</span>
+      <h3>FP Bàsica d'Informàtica d'Oficina</h3>
+      <p class="mc-slogan">Primer pas cap a l'ocupació digital</p>
+    </article>
+
+    <article class="mini-card" style="border-color:var(--green)">
+      <img class="mc-img" src="imgs/smx_illustracio.png" alt="">
+      <span class="mc-type" style="background:var(--green);color:var(--dark)">Grau Mitjà</span>
+      <h3>SMX – Sistemes Microinformàtics i Xarxes</h3>
+      <p class="mc-slogan">El teu futur està connectat!</p>
+      <img class="mc-qr" src="imgs/qr_smx.png" alt="QR SMX">
+    </article>
+
+    <article class="mini-card" style="border-color:var(--cyan)">
+      <img class="mc-img" src="imgs/asix_tecnologies.png" alt="">
+      <span class="mc-type" style="background:var(--lblue);color:#fff">Grau Superior</span>
+      <h3>ASIX – Administració de Sistemes en Xarxa</h3>
+      <p class="mc-slogan">Administra, connecta i protegeix</p>
+      <img class="mc-qr" src="imgs/qr_asix.png" alt="QR ASIX">
+    </article>
+
+    <article class="mini-card" style="border-color:#ff9800">
+      <img class="mc-img" src="imgs/dam_ilustracio.png" alt="">
+      <span class="mc-type" style="background:#ff9800;color:var(--dark)">Grau Superior</span>
+      <h3>DAM – Aplicacions Multiplataforma</h3>
+      <p class="mc-slogan">El teu futur, en multiplataforma</p>
+      <img class="mc-qr" src="imgs/qr_dam.png" alt="QR DAM">
+    </article>
+
+    <article class="mini-card" style="border-color:var(--lblue)">
+      <img class="mc-img" src="imgs/daw_illustracio.png" alt="">
+      <span class="mc-type" style="background:var(--lblue);color:#fff">Grau Superior</span>
+      <h3>DAW – Aplicacions Web</h3>
+      <p class="mc-slogan">El teu futur és a la web</p>
+      <img class="mc-qr" src="imgs/qr_daw.png" alt="QR DAW">
+    </article>
+
+    <article class="mini-card" style="border-color:var(--purple)">
+      <img class="mc-img" src="imgs/curs_especialitzacio_ia_bd_illustracio.png" alt="">
+      <span class="mc-type" style="background:var(--purple);color:#fff">Especialització</span>
+      <h3>IA i Big Data</h3>
+      <p class="mc-slogan">Transforma dades en intel·ligència</p>
+      <img class="mc-qr" src="imgs/qr_iabd.png" alt="QR IA i Big Data">
+    </article>
+
+    <article class="mini-card" style="border-color:#e91e63">
+      <img class="mc-img" src="imgs/curs_especialitzacio_aprenentatge_automatic_ilustracio.png" alt="">
+      <span class="mc-type" style="background:#e91e63;color:#fff">Especialització</span>
+      <h3>Aprenentatge Automàtic: Dades i Entrenament</h3>
+      <p class="mc-slogan">Del dato al model intel·ligent</p>
+      <img class="mc-qr" src="imgs/qr_aa.png" alt="QR Aprenentatge Automàtic">
+    </article>
+
+    <article class="mini-card" style="border-color:#00bcd4">
+      <img class="mc-img" src="imgs/curs_especialitzacio_nubol_ilustracio.png" alt="">
+      <span class="mc-type" style="background:#00bcd4;color:var(--dark)">Especialització</span>
+      <h3>Recursos i Servicis en el Núvol</h3>
+      <p class="mc-slogan">El teu futur és en el Cloud!</p>
+      <img class="mc-qr" src="imgs/qr_nuvol.png" alt="QR Núvol">
+    </article>
+
+  </div>
+</section>
+
+<!-- ===== PROGRESS BAR & COUNTER =============================== -->
+<div id="progress-bar"></div>
+<div id="slide-counter"></div>
+<div id="carousel-indicators" class="carousel-indicators" aria-hidden="true"></div>
+
+<script>
+/* ========================= SLIDESHOW ========================== */
+(function () {
+  'use strict';
+
+  const SLIDE_DURATION = 5000; // ms per cada slide
+  const screens = Array.from(document.querySelectorAll('.screen'));
+  const indicatorsHost = document.getElementById('carousel-indicators');
+
+  let current = 0;
+  let timeout = null;
+
+  const indicators = screens.map((_, index) => {
+    const item = document.createElement('div');
+    item.className = 'carousel-indicator';
+    if (index === 0) item.classList.add('active');
+    indicatorsHost.appendChild(item);
+    return item;
+  });
+
+  function showSlide(idx) {
+    screens.forEach((s, i) => {
+      s.classList.toggle('active', i === idx);
+      indicators[i].classList.toggle('active', i === idx);
+    });
+    current = idx;
+    restartTimer();
+  }
+
+  function restartTimer() {
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      const next = (current + 1) % screens.length;
+      showSlide(next);
+    }, SLIDE_DURATION);
+  }
+
+  // Interacció teclat / clic per avançar/retrocedir
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+      showSlide((current + 1) % screens.length);
+    } else if (e.key === 'ArrowLeft') {
+      showSlide((current - 1 + screens.length) % screens.length);
+    } else if (e.key === 'f' || e.key === 'F') {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+  });
+
+  document.addEventListener('click', () => {
+    showSlide((current + 1) % screens.length);
+  });
+
+  // Inici
+  showSlide(0);
+})();
+</script>
+</body>
+</html>
