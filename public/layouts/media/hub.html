@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IntegrIA Hub</title>
+<style>
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   IES Dr. LluÃ­s Simarro â€” Centro de Excelencia IA & Big Data
+   Stylesheet â€” Light Tech Palette
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
+/* â”€â”€â”€ CSS VARIABLES â”€â”€â”€ */
+:root {
+  --navy: #f0f5fb;
+  --cyan: #0ea5c8;
+  --cyan-glow: rgba(14, 165, 200, 0.12);
+  --blue: #1a3a6b;
+  --white: #1a2e4a;
+  --white-90: rgba(26, 46, 74, 0.92);
+  --white-60: rgba(26, 46, 74, 0.60);
+  --white-10: rgba(26, 46, 74, 0.06);
+  --border: rgba(14, 165, 200, 0.25);
+  --border-dim: rgba(26, 46, 74, 0.12);
+  --font-main: 'Inter', sans-serif;
+  --font-head: 'Space Grotesk', sans-serif;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-glow: 0 0 40px rgba(14, 165, 200, 0.14);
+  --radius: 16px;
+}
+
+/* â”€â”€â”€ RESET & BASE â”€â”€â”€ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-main);
+  background: #f0f5fb;
+  color: var(--white-90);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* â”€â”€â”€ TYPOGRAPHY â”€â”€â”€ */
+.gradient-text {
+  background: linear-gradient(135deg, var(--cyan) 0%, var(--blue) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* â”€â”€â”€ UTILITIES â”€â”€â”€ */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.section {
+  padding: 100px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-main);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  border: 1px solid var(--border);
+  background: var(--cyan-glow);
+  padding: 8px 16px;
+  border-radius: 99px;
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-family: var(--font-head);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--white);
+  margin-bottom: 24px;
+}
+
+.section-title.centered {
+  text-align: center;
+}
+
+.section-desc {
+  font-size: 1.05rem;
+  color: var(--white-60);
+  line-height: 1.75;
+  margin-bottom: 16px;
+  max-width: 640px;
+}
+
+.section-desc.centered {
+  text-align: center;
+  max-width: 580px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* â”€â”€â”€ REVEAL ANIMATIONS â”€â”€â”€ */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   SECCIÃ“N 2: DATIA HUB
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.section-datia {
+  background: #f0f5fb;
+  position: relative;
+  padding: 56px 0 40px;
+}
+
+.section-datia .container {
+  position: relative;
+  z-index: 1;
+}
+
+.datia-bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(14, 165, 200, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14, 165, 200, 0.07) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: 0 0, 0 0;
+  animation: gridDrift 14s linear infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.datia-bg-grid::before,
+.datia-bg-grid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.datia-bg-grid::before {
+  background:
+    linear-gradient(110deg,
+      rgba(255, 255, 255, 0) 20%,
+      rgba(255, 255, 255, 0.62) 36%,
+      rgba(14, 165, 200, 0.2) 46%,
+      rgba(255, 255, 255, 0) 58%);
+  transform: translateX(-120%);
+  opacity: 0.7;
+  animation: reflectionSweep 7s ease-in-out infinite;
+}
+
+.datia-bg-grid::after {
+  background-image:
+    radial-gradient(circle, rgba(255, 153, 51, 0.56) 1.2px, transparent 2px),
+    radial-gradient(circle, rgba(255, 120, 0, 0.4) 1.2px, transparent 2px);
+  background-size: 64px 64px, 84px 84px;
+  background-position: 0 0, 30px 22px;
+  opacity: 0.42;
+  animation: particlesFloat 10s linear infinite;
+}
+
+@keyframes gridDrift {
+  from {
+    background-position: 0 0, 0 0;
+  }
+
+  to {
+    background-position: 50px 50px, 50px 50px;
+  }
+}
+
+@keyframes reflectionSweep {
+  0% {
+    transform: translateX(-120%);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 0.85;
+  }
+
+  60% {
+    opacity: 0.55;
+  }
+
+  100% {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+}
+
+@keyframes particlesFloat {
+  from {
+    background-position: 0 0, 30px 22px;
+  }
+
+  to {
+    background-position: 0 -72px, 30px -92px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .datia-bg-grid,
+  .datia-bg-grid::before,
+  .datia-bg-grid::after {
+    animation: none;
+  }
+}
+
+.datia-top-logo,
+.datia-bottom-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  margin-top: 0;
+}
+
+.datia-top-logo img,
+.datia-bottom-logo img {
+  max-height: 80px;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.datia-bottom-logo {
+  margin-bottom: 0;
+  margin-top: 18px;
+}
+
+.datia-header {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.datia-intro {
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.datia-pillars {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.pillar-card {
+  background: #ffffff;
+  border: 1px solid var(--border-dim);
+  border-radius: var(--radius);
+  padding: 12px;
+  position: relative;
+  transition: all var(--transition);
+}
+
+.pillar-card:hover {
+  border-color: var(--border);
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-2px);
+}
+
+.pillar-featured {
+  border-color: var(--border);
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.06) 0%, rgba(26, 107, 255, 0.06) 100%);
+  box-shadow: var(--shadow-glow);
+}
+
+.pillar-badge {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--cyan) 0%, var(--blue) 100%);
+  color: var(--navy);
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+
+.pillar-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--cyan-glow);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cyan);
+  margin-bottom: 8px;
+}
+
+.pillar-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.pillar-card h3 {
+  font-family: var(--font-head);
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.pillar-card p {
+  font-size: 0.7rem;
+  color: var(--white-60);
+  line-height: 1.3;
+  margin-bottom: 6px;
+}
+
+.pillar-tag {
+  display: inline-flex;
+  padding: 2px 7px;
+  background: var(--white-10);
+  border: 1px solid var(--border-dim);
+  border-radius: 99px;
+  font-size: 0.58rem;
+  line-height: 1;
+  font-weight: 600;
+  color: var(--cyan);
+  letter-spacing: 0.05em;
+}
+
+.datia-partners-row {
+  display: block;
+  background: #ffffff;
+  border: 1px solid var(--border-dim);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+}
+
+.row-label {
+  font-size: 0.72rem;
+  color: var(--white-60);
+  font-weight: 500;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.ecosystem-logos {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.ecosystem-logo-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 64px;
+  background: #ffffff;
+  border: 1px solid var(--border-dim);
+  border-radius: 8px;
+  padding: 8px;
+  transition: all var(--transition);
+}
+
+.ecosystem-logo-item:hover {
+  border-color: var(--border);
+  background: var(--cyan-glow);
+}
+
+.ecosystem-logo-item img {
+  max-width: 100%;
+  max-height: 42px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 72px 0;
+  }
+
+  .section-datia {
+    padding: 28px 0 18px;
+  }
+
+  .datia-pillars {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .ecosystem-logos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .section-title {
+    font-size: 1.8rem;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<section class="section section-datia" id="integria">
+    <div class="datia-bg-grid"></div>
+    <div class="container">
+      
+      <div class="datia-top-logo reveal visible">
+        <img src="hub/logosimarrovectorial(1).svg" alt="Logo IES Simarro">
+      </div>
+      
+      <div class="datia-header reveal visible">
+        <h2 class="section-title">
+          <span class="gradient-text">IntegrIA Hub</span>
+        </h2>
+        <p class="section-desc datia-intro">
+          Un ecosistema único de colaboración entre el IES Dr. Lluís Simarro y las empresas más innovadoras del sector,
+          donde la tecnología deja de ser teoría para convertirse en impacto real.
+        </p>
+      </div>
+      <div class="datia-pillars reveal visible">
+        <div class="pillar-card" style="--mouse-x: 14.539007092198581%; --mouse-y: 28.63115093997937%;">
+          <div class="pillar-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"></path>
+            </svg>
+          </div>
+          <h3>Co-creación de Proyectos IA</h3>
+          <p>Alumnado y empresas diseñan conjuntamente soluciones de Inteligencia Artificial y Big Data para retos
+            reales de la industria.</p>
+          <div class="pillar-tag">Proyectos Reales</div>
+        </div>
+        <div class="pillar-card pillar-featured">
+          <div class="pillar-badge">Hub Core</div>
+          <div class="pillar-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+          </div>
+          <h3>Transferencia Tecnológica</h3>
+          <p>Flujo bidireccional de conocimiento: la empresa aporta casos de uso reales y el centro devuelve talento
+            cualificado e investigación aplicada.</p>
+          <div class="pillar-tag">Centro ↔ Empresa</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+          </div>
+          <h3>Living Lab · CENTINELA</h3>
+          <p>Entorno experimental basado en IoT y Big Data instalado en el propio centro educativo para proyectos de
+            sostenibilidad en tiempo real.</p>
+          <div class="pillar-tag">IoT &amp; Sostenibilidad</div>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+              <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+            </svg>
+          </div>
+          <h3>Formación</h3>
+          <p>Oficina de proyectos para captar financiación y oportunidades de innovación, e impulso de microformaciones
+            adaptadas a las necesidades reales de las empresas del ecosistema.</p>
+          <div class="pillar-tag">Innovación &amp; Talento</div>
+        </div>
+      </div>
+      <div class="datia-partners-row reveal visible">
+       
+        <div class="ecosystem-logos">
+          <div class="ecosystem-logo-item"><img src="hub/CAPTIA-peq.webp" alt="Captia Technology"></div>
+          <div class="ecosystem-logo-item"><img src="hub/ITI_logo_2025_v2.svg" alt="ITI"></div>
+          <div class="ecosystem-logo-item"><img src="hub/xativa-color.png" alt="Xativa"></div>
+          <div class="ecosystem-logo-item"><img src="hub/YSABEL_MORA_negro.png" alt="Ysabel Mora"></div>
+          <div class="ecosystem-logo-item"><img src="hub/cecotec.svg" alt="Cecotec"></div>
+          <div class="ecosystem-logo-item"><img src="hub/vicky-foods-logo.png" alt="Vicky Foods"></div>
+          <div class="ecosystem-logo-item"><img src="hub/lluisalcanyis.png" alt="Lluis Alcanyis"></div>
+          <div class="ecosystem-logo-item"><img src="hub/lg-cap-costera-canal.png" alt="Costera"></div>
+          <div class="ecosystem-logo-item"><img src="hub/logo_ODEC_menu.svg" alt="ODEC"></div>
+          <div class="ecosystem-logo-item"><img src="hub/Logo-Guerola-Dark.svg" alt="Guerola"></div>
+          <div class="ecosystem-logo-item"><img src="hub/eliseopla.jpg" alt="Eliseo Pla"></div>
+         
+          <div class="ecosystem-logo-item"><img src="hub/adexa-logo-footer.png" alt="Adexa"></div>
+        </div>
+      </div>
+      
+      <div class="datia-bottom-logo reveal visible">
+        <img src="hub/Convivencia-Logos-NextGeneration-GVA-negro-VAL2.png" alt="Convivencia Logos NextGeneration GVA">
+      </div>
+    </div>
+  </section>
+</body>
+</html>
