@@ -1,45 +1,17 @@
 {
   "id": "layout-1",
-  "durationMs": 36000,
+  "durationMs": 10000,
   "regions": [
     {
-      "id": "principal-video",
+      "id": "integria-fullscreen",
       "x": 0,
       "y": 0,
-      "width": 70,
+      "width": 100,
       "height": 100,
       "media": {
-        "type": "video",
-        "src": "/layouts/media/DIAEUROPA.mp4",
-        "fit": "contain",
-        "loop": true,
-        "controls": false
-      }
-    },
-    {
-      "id": "lateral-imagen2",
-      "x": 70,
-      "y": 0,
-      "width": 30,
-      "height": 50,
-      "media": {
-        "type": "image",
-        "src": "/layouts/media/ka171.png",
-        "title": "Foto Simarro",
-        "fit": "contain"
-      }
-    },
-    {
-      "id": "lateral-imagen",
-      "x": 70,
-      "y": 50,
-      "width": 30,
-      "height": 50,
-      "media": {
-        "type": "image",
-        "src": "/layouts/media/erasmusk.png",
-        "alt": "Promoción destacada",
-        "fit": "contain"
+        "type": "html",
+        "src": "/layouts/media/hub.html",
+        "title": "Hub"
       }
     }
   ]
